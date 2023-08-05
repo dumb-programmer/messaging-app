@@ -1,0 +1,19 @@
+.tab-component {
+    width: 100%;
+}
+
+.tab-header {
+    display: flex;
+}
+
+.tab-header .tab {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tab__active {
+    border-bottom: 1px solid black;
+    font-weight: 700;
+}

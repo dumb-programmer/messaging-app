@@ -1,0 +1,55 @@
+main {
+    background-color: #fff;
+    flex: 2;
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.tabs {
+    border-right: 2px solid #eee;
+}
+
+.tabs nav {
+    margin-top: 20px;
+}
+
+.tabs ul {
+    list-style: none;
+}
+
+.tab {
+    padding: 10px 50px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tab a {
+    width: 100%;
+}
+
+.view-container {
+    max-height: 100vh;
+    overflow: scroll;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    border-radius: 3px;
+}
+
+.message, .tab {
+    cursor: pointer;
+    transition: background-color .3s;
+}
+
+.message:hover, .tab:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.avatar {
+    height: 80px;
+    width: 80px;
+}

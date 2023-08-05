@@ -1,0 +1,57 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+input, textarea {
+    border: 1px solid #e2e8e6;
+    padding: 5px;
+    border-radius: 5px;
+    resize: none;
+}
+
+.form-control input, .form-control textarea {
+    min-width: 100%;
+}
+
+.form-control textarea {
+    min-height: 100px;
+}
+
+button[type="submit"] {
+    background-color: #466543;
+    color: #fff;
+    border: none;
+    padding: 10px;
+}
+
+.artwork {
+    background-image: url("../assets/artwork.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-width: 50%;
+}
+
+.profile-picture-upload {
+    height: 80px;
+    width: 80px;
+    border: 1px dashed black;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color .2s;
+    cursor: pointer;
+}
+
+.profile-picture-upload:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
