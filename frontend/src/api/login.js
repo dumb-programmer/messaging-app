@@ -3,7 +3,7 @@ const login = async (data) => {
         mode: "cors", method: "POST", body: JSON.stringify(data), headers: {
             "Content-Type": "application/json"
         }
-    })
+    });
 };
 
 export default login;

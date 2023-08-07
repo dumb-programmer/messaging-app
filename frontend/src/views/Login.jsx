@@ -4,15 +4,14 @@ import login from "../api/login";
 import useAuthContext from "../hooks/useAuthContext";
 import "../styles/Login.css";
 
+const initialState = {
+  username: "",
+  password: "",
+};
+
 const Login = () => {
-  const [data, setData] = useState({
-    username: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({
-    username: "",
-    password: "",
-  });
+  const [data, setData] = useState(initialState);
+  const [errors, setErrors] = useState(initialState);
   const navigate = useNavigate();
   const { setAuth, auth } = useAuthContext();
 
@@ -31,7 +30,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({ username: "", password: "" });
+    setErrors(initialState);
     try {
       const response = await login(data);
       const responseData = await response.json();
@@ -92,7 +91,7 @@ const Login = () => {
           <div className="form-control">
             <label htmlFor="password">Password</label>
             <input
-              type="text"
+              type="password"
               name="password"
               id="password"
               className={`${errors.password ? "input__invalid" : ""}`}
