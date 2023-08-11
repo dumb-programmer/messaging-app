@@ -2,11 +2,10 @@ const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const crypto = require("crypto");
-const path = require("path");
-const { writeFile } = require("fs/promises");
 const asyncHandler = require("../utils/asyncHandler");
+const multerSetup = require("../middlewares/multerSetup");
+const getHashedPassword = require("../utils/getHashedPassword");
+const storeAvatar = require("../utils/storeAvatar");
 
 const validateUser = [
     body("firstName").notEmpty(),
@@ -36,14 +35,7 @@ const userExists = async (req, res, next) => {
 }
 
 const signup = [
-    multer({
-        storage: multer.memoryStorage(), fileFilter: (req, file, cb) => {
-            if (/^image\//g.test(file.mimetype)) {
-                return cb(null, true);
-            }
-            return cb(new Error("Unsupported file"), false);
-        }
-    }).single("avatar"),
+    multerSetup(),
     ...validateUser,
     userExists,
     asyncHandler(async (req, res, next) => {
@@ -51,13 +43,9 @@ const signup = [
         if (result.isEmpty()) {
             const { username, password, firstName, lastName, bio } = req.body;
 
-            const fileHash = crypto.randomBytes(16).toString("hex");
-            const fileName = fileHash + path.extname(req.file.originalname);
-            const filePath = `uploads/avatars/${fileName}`;
-            await writeFile(`${__dirname}/../${filePath}`, req.file.buffer);
+            const filePath = await storeAvatar(req.file.originalname, req.file.buffer);
 
-            const salt = await bcryptjs.genSalt();
-            const hashedPassword = await bcryptjs.hash(password, salt);
+            const hashedPassword = await getHashedPassword(password);
             await User.create({ username, password: hashedPassword, firstName, lastName, bio, avatar: filePath });
             res.json({ message: "User created successfully" });
         }
@@ -82,8 +70,8 @@ const login = [
                     }
                     if (isEqual) {
                         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-                        const { _id, username, firstName, lastName, avatar } = user;
-                        res.json({ token, user: { _id, firstName, lastName, username, avatar } });
+                        const { _id, username, firstName, lastName, avatar, bio } = user;
+                        res.json({ token, user: { _id, firstName, lastName, username, avatar, bio } });
                     }
                     else {
                         res.status(401).json({ message: "Incorrect password" });
