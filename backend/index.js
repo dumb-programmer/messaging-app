@@ -52,9 +52,11 @@ app.use(async (req, res, next) => {
 
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
+const requestRouter = require("./routes/requestRouter");
 
 app.use("/api", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/requests", requestRouter);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: "Not found" });
