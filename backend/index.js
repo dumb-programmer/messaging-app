@@ -8,6 +8,9 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
 const User = require("./models/user");
+const { MediaMeta } = require("./models");
+const isAuthorized = require("./middlewares/isAuthorized");
+const asyncHandler = require("./utils/asyncHandler");
 
 (async () => {
     try {
@@ -30,6 +33,7 @@ app.use(helmet({
         policy: "cross-origin"
     }
 }));
+
 app.use("/uploads/avatars", express.static(__dirname + "/uploads/avatars/"));
 if (process.env.NODE_ENV === "production") {
     app.use(RateLimit({
@@ -48,17 +52,30 @@ app.use(async (req, res, next) => {
         }
     }
     next();
-})
+});
+app.use("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
+    const { fileName } = req.params;
+    const fileMeta = await MediaMeta.findOne({ fileName });
+    if (!fileMeta) {
+        return res.sendStatus(404);
+    }
+    if (fileMeta.owners.includes(req.user._id)) {
+        return res.sendFile(`${__dirname}${req.originalUrl}`);
+    }
+    res.sendStatus(403);
+})]);
 
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
 const requestRouter = require("./routes/requestRouter");
 const friendRouter = require("./routes/friendRouter");
+const messageRouter = require("./routes/messageRouter");
 
 app.use("/api", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/requests", requestRouter);
 app.use("/api/friends", friendRouter);
+app.use("/api/messages", messageRouter);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: "Not found" });
