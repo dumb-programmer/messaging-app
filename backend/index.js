@@ -78,7 +78,7 @@ app.use("/api/friends", friendRouter);
 app.use("/api/messages", messageRouter);
 
 app.use((req, res, next) => {
-    res.status(404).json({ message: "Not found" });
+    res.status(404).json({ message: "Invalid route" });
 });
 
 app.use((err, req, res, next) => {

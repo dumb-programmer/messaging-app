@@ -23,11 +23,43 @@ const areFriends = async (userId, otherUserId) => {
     return false;
 };
 
-const getMessages = [isAuthorized, asyncHandler(async (req, res, next) => {
-    const { userId } = req.query;
-    if (!userId) {
-        return res.status(400).json({ message: "userId search query is required" });
+const getLatestMessages = asyncHandler(async (req, res, next) => {
+    const { page } = req.query;
+    const PAGE_SIZE = 1;
+    // Get latest one message from/to the currently signed in user
+    if (req.query.userId) {
+        return next();
     }
+    // TODO: use the aggregate function instead of manual calculations
+    const messages = await Message.find({
+        $or: [
+            { to: req.user._id },
+            { from: req.user._id }
+        ],
+    }).sort({ createdAt: -1 }).populate("to", { password: 0, bio: 0 }).populate("from", { password: 0, bio: 0 });
+
+    const latestMessages = [];
+    const done = new Set();
+    messages.forEach(message => {
+        if (message.to._id.toString() === req.user._id.toString()) {
+            if (!done.has(message.from._id.toString())) {
+                latestMessages.push(message);
+                done.add(message.from._id.toString());
+            }
+        }
+        else if (message.from._id.toString() === req.user._id.toString()) {
+            if (!done.has(message.to._id.toString())) {
+                latestMessages.push(message);
+                done.add(message.to._id.toString());
+            }
+        }
+    });
+
+    res.json({ messages: latestMessages, page: page || 1 });
+});
+
+const getMessages = [isAuthorized, getLatestMessages, asyncHandler(async (req, res, next) => {
+    const { userId } = req.query;
     try {
         if (await areFriends(req.user._id, userId)) {
             return next();
@@ -41,15 +73,16 @@ const getMessages = [isAuthorized, asyncHandler(async (req, res, next) => {
         next(error);
     }
 }), asyncHandler(async (req, res, next) => {
-    const { userId } = req.query;
+    const { userId, page } = req.query;
+    const PAGE_SIZE = 10;
     try {
         const messages = await Message.find({
             $or: [
                 { from: req.user._id, to: userId },
                 { from: userId, to: req.user._id }
             ]
-        }).populate("to", { password: 0, bio: 0 }).populate("from", { password: 0, bio: 0 }).sort({ createdAt: 1 });
-        res.json({ messages });
+        }).populate("to", { password: 0, bio: 0 }).populate("from", { password: 0, bio: 0 }).sort({ createdAt: 1 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);
+        res.json({ messages, page });
     }
     catch (error) {
         if (error.name === "CastError") {
@@ -104,26 +137,35 @@ const deleteMessage = [
     isAuthorized,
     asyncHandler(async (req, res) => {
         const { messageId } = req.params;
-        const message = await Message.findById(messageId);
-        if (!message) {
-            return res.sendStatus(404);
-        }
-        if (message.from.toString() === req.user._id.toString()) {
-            if (message.media.length > 0) {
-                // TODO: Maybe delete media and message at the same time??
-                await Promise.all(message.media.map(async media => {
-                    const parts = media.split("/");
-                    const fileName = parts[parts.length - 1];
-                    return Promise.all([
-                        fs.unlink(`${__dirname}/..${media}`),
-                        MediaMeta.deleteOne({ fileName })
-                    ]);
-                }));
+        try {
+            const message = await Message.findById(messageId);
+            console.log(messageId);
+            if (!message) {
+                return res.sendStatus(404);
             }
-            await Message.deleteOne({ _id: messageId });
-            return res.sendStatus(200);
+            if (message.from.toString() === req.user._id.toString()) {
+                if (message.media.length > 0) {
+                    // TODO: Maybe delete media and message at the same time??
+                    await Promise.all(message.media.map(async media => {
+                        const parts = media.split("/");
+                        const fileName = parts[parts.length - 1];
+                        return Promise.all([
+                            fs.unlink(`${__dirname}/..${media}`),
+                            MediaMeta.deleteOne({ fileName })
+                        ]);
+                    }));
+                }
+                await Message.deleteOne({ _id: messageId });
+                return res.sendStatus(200);
+            }
+            res.sendStatus(403);
         }
-        res.sendStatus(403);
+        catch (error) {
+            if (error.name === "CastError") {
+                return res.status(400).json({ message: "Invalid messageId" });
+            }
+            next(error);
+        }
     })
 ];
 

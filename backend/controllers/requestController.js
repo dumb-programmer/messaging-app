@@ -34,14 +34,18 @@ const sendRequest = [isAuthorized, asyncHandler(async (req, res, next) => {
     res.sendStatus(200);
 })];
 
+const PAGE_SIZE = 10;
+
 const getIncomingRequests = [isAuthorized, asyncHandler(async (req, res) => {
-    const requests = await Request.find({ to: req.user._id }, { to: 0 }).populate("from", { password: 0, bio: 0 })
-    res.json({ requests });
+    const { page } = req.query;
+    const requests = await Request.find({ to: req.user._id }, { to: 0 }).populate("from", { password: 0, bio: 0 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);
+    res.json({ requests, page });
 })];
 
 const getPendingRequests = [isAuthorized, asyncHandler(async (req, res) => {
-    const requests = await Request.find({ from: req.user._id }, { from: 0 }).populate("to", { password: 0, bio: 0 })
-    res.json({ requests });
+    const { page } = req.query;
+    const requests = await Request.find({ from: req.user._id }, { from: 0 }).populate("to", { password: 0, bio: 0 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);
+    res.json({ requests, page });
 })];
 
 const acceptRequest = [isAuthorized, asyncHandler(async (req, res) => {

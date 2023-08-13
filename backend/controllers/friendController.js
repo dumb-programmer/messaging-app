@@ -3,7 +3,9 @@ const asyncHandler = require("../utils/asyncHandler");
 const { Friend } = require("../models");
 
 const getFriends = [isAuthorized, asyncHandler(async (req, res) => {
-    const friends = await Friend.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] }).populate("user1", { password: 0, bio: 0 }).populate("user2", { password: 0, bio: 0 });
+    const { page } = req.query;
+    const PAGE_SIZE = 10;
+    const friends = await Friend.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] }).populate("user1", { password: 0, bio: 0 }).populate("user2", { password: 0, bio: 0 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);;
     res.json({
         friends: friends.map(friend => {
             if (friend.user1._id.toString() === req.user._id.toString()) {
@@ -12,7 +14,8 @@ const getFriends = [isAuthorized, asyncHandler(async (req, res) => {
             else if (friend.user2._id.toString() === req.user._id.toString()) {
                 return { _id: friend._id, user: friend.user1 };
             }
-        })
+        }),
+        page
     });
 })];
 
