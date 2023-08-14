@@ -6,6 +6,7 @@ const RateLimit = require("express-rate-limit");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 const User = require("./models/user");
 const { MediaMeta } = require("./models");
@@ -14,14 +15,13 @@ const asyncHandler = require("./utils/asyncHandler");
 
 (async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URL)
+        await mongoose.connect(process.env.MONGODB_URL);
         console.log("Connected to database");
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err);
         process.exit(1);
     }
-})()
+})();
 
 const app = express();
 
@@ -34,11 +34,11 @@ app.use(helmet({
     }
 }));
 
-app.use("/uploads/avatars", express.static(__dirname + "/uploads/avatars/"));
+app.use("/uploads/avatars", express.static(path.join(__dirname, "uploads/avatars/")));
 if (process.env.NODE_ENV === "production") {
     app.use(RateLimit({
         windowMs: 1 * 60 * 1000, // 1 minute
-        max: 20,
+        max: 20
     }));
 }
 
@@ -53,6 +53,7 @@ app.use(async (req, res, next) => {
     }
     next();
 });
+
 app.use("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
     const { fileName } = req.params;
     const fileMeta = await MediaMeta.findOne({ fileName });
@@ -83,7 +84,7 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     if (err.toString().split(": ")[1].toLowerCase() === "unsupported file") {
-        return res.status(400).json({ message: [{ path: "avatar", msg: "Unsupported file type, only images are supported" }] })
+        return res.status(400).json({ message: [{ path: "avatar", msg: "Unsupported file type, only images are supported" }] });
     }
     if (process.env.NODE_ENV === "development") {
         console.error(err);

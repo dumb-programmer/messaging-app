@@ -10,7 +10,6 @@ const multerSetup = require("../middlewares/multerSetup");
 const getHashedPassword = require("../utils/getHashedPassword");
 const storeAvatar = require("../utils/storeAvatar");
 
-
 const getUser = [isAuthorized, asyncHandler(async (req, res) => {
     const { userId } = req.params;
     const user = await User.findById(userId, { password: 0 });
@@ -59,12 +58,11 @@ const validateUser = [
         const result = await bcryptjs.compare(password, req.user.password);
         if (result) {
             return next();
-        }
-        else {
+        } else {
             return res.status(403).json({ message: "Incorrect password" });
         }
     }
-]
+];
 
 const updateUser = [
     isAuthorized,
@@ -97,9 +95,8 @@ const updateUser = [
                     return res.status(403).json({ message: "Incorrect field" });
             }
             res.json({ message: "User updated", user: await User.findById(req.user.id, { password: 0 }) });
-        }
-        else {
-            res.status(403).json({ message: result.array() })
+        } else {
+            res.status(403).json({ message: result.array() });
         }
     })
 ];

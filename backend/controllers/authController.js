@@ -24,7 +24,6 @@ const validateUser = [
     }
 ];
 
-
 const userExists = async (req, res, next) => {
     const { username } = req.body;
     const user = await User.findOne({ username });
@@ -32,7 +31,7 @@ const userExists = async (req, res, next) => {
         return res.status(409).json({ message: "User with this username already exists please use a unique username" });
     }
     next();
-}
+};
 
 const signup = [
     multerSetup(),
@@ -48,8 +47,7 @@ const signup = [
             const hashedPassword = await getHashedPassword(password);
             await User.create({ username, password: hashedPassword, firstName, lastName, bio, avatar: filePath });
             res.json({ message: "User created successfully" });
-        }
-        else {
+        } else {
             res.status(400).json({ message: result.array() });
         }
     })
@@ -72,17 +70,14 @@ const login = [
                         const token = jwt.sign({ _id: user._id }, process.env.SECRET);
                         const { _id, username, firstName, lastName, avatar, bio } = user;
                         res.json({ token, user: { _id, firstName, lastName, username, avatar, bio } });
-                    }
-                    else {
+                    } else {
                         res.status(401).json({ message: "Incorrect password" });
                     }
                 });
-            }
-            else {
+            } else {
                 res.status(404).json({ message: "No such user exists" });
             }
-        }
-        else {
+        } else {
             res.status(400).json({ message: result.array() });
         }
     })

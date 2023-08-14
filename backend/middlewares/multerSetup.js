@@ -1,7 +1,8 @@
 const multer = require("multer");
 
 const multerSetup = () => multer({
-    storage: multer.memoryStorage(), fileFilter: (req, file, cb) => {
+    storage: multer.memoryStorage(),
+    fileFilter: (req, file, cb) => {
         if (/^image\//g.test(file.mimetype)) {
             return cb(null, true);
         }

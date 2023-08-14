@@ -7,7 +7,7 @@ const storeMedia = async (mediaList, directory, owners) => {
         const fileName = generateFilename(media.originalname);
         const filePath = `${directory}/${fileName}`;
         await writeFile(`${__dirname}/../${filePath}`, media.buffer);
-        await MediaMeta.create({ fileName, owners })
+        await MediaMeta.create({ fileName, owners });
         return filePath;
     }));
     return mediaPaths;

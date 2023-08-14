@@ -3,7 +3,6 @@ const isAuthorized = require("../middlewares/isAuthorized");
 const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
 
-
 const { Message, Friend, MediaMeta } = require("../models");
 const storeMedia = require("../utils/storeMedia");
 
@@ -37,7 +36,7 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
                 $or: [
                     { to: req.user._id },
                     { from: req.user._id }
-                ],
+                ]
             }
         },
         {
@@ -45,7 +44,7 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
                 localField: "from",
                 foreignField: "_id",
                 from: "users",
-                as: "from",
+                as: "from"
             }
         },
         {
@@ -53,7 +52,7 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
                 localField: "to",
                 foreignField: "_id",
                 from: "users",
-                as: "to",
+                as: "to"
             }
         },
         {
@@ -91,7 +90,7 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
         },
         {
             $limit: PAGE_SIZE
-        },
+        }
     ]);
 
     res.json({ messages: latestMessages, page: page || 1 });
@@ -104,8 +103,7 @@ const getMessages = [isAuthorized, getLatestMessages, asyncHandler(async (req, r
             return next();
         }
         res.status(403).json({ message: "You aren't friends with this user" });
-    }
-    catch (error) {
+    } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid userId" });
         }
@@ -122,8 +120,7 @@ const getMessages = [isAuthorized, getLatestMessages, asyncHandler(async (req, r
             ]
         }).populate("to", { password: 0, bio: 0 }).populate("from", { password: 0, bio: 0 }).sort({ createdAt: 1 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);
         res.json({ messages, page });
-    }
-    catch (error) {
+    } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid userId" });
         }
@@ -145,7 +142,7 @@ const createMessage = [
         const { to, content } = req.body;
         let media = [];
         if (req.files) {
-            media = await storeMedia(req.files, `/uploads/media`, [req.user._id, to]);
+            media = await storeMedia(req.files, "/uploads/media", [req.user._id, to]);
         }
         await Message.create({ from: req.user._id, to, content, media });
         res.sendStatus(200);
@@ -165,8 +162,7 @@ const updateMessage = [
             const { content } = req.body;
             await Message.updateOne({ _id: messageId }, { content });
             res.sendStatus(200);
-        }
-        else {
+        } else {
             res.sendStatus(403);
         }
     })
@@ -174,7 +170,7 @@ const updateMessage = [
 
 const deleteMessage = [
     isAuthorized,
-    asyncHandler(async (req, res) => {
+    asyncHandler(async (req, res, next) => {
         const { messageId } = req.params;
         try {
             const message = await Message.findById(messageId);
@@ -198,8 +194,7 @@ const deleteMessage = [
                 return res.sendStatus(200);
             }
             res.sendStatus(403);
-        }
-        catch (error) {
+        } catch (error) {
             if (error.name === "CastError") {
                 return res.status(400).json({ message: "Invalid messageId" });
             }

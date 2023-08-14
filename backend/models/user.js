@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     username: { type: String, require: true, unique: true },
     password: { type: String, require: true },
     avatar: { type: String, require: true },
-    bio: { type: String, default: "" },
+    bio: { type: String, default: "" }
 });
 
 module.exports = mongoose.model("User", UserSchema);

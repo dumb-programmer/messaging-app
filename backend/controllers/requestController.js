@@ -58,8 +58,7 @@ const acceptRequest = [isAuthorized, asyncHandler(async (req, res) => {
         }
         // NOTE: or send 403??
         res.sendStatus(404);
-    }
-    catch (error) {
+    } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid id" });
         }
