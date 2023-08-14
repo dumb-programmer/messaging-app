@@ -24,36 +24,75 @@ const areFriends = async (userId, otherUserId) => {
 };
 
 const getLatestMessages = asyncHandler(async (req, res, next) => {
+    // Get latest one message from/to the currently signed in user
     const { page } = req.query;
     const PAGE_SIZE = 1;
-    // Get latest one message from/to the currently signed in user
     if (req.query.userId) {
         return next();
     }
-    // TODO: use the aggregate function instead of manual calculations
-    const messages = await Message.find({
-        $or: [
-            { to: req.user._id },
-            { from: req.user._id }
-        ],
-    }).sort({ createdAt: -1 }).populate("to", { password: 0, bio: 0 }).populate("from", { password: 0, bio: 0 });
-
-    const latestMessages = [];
-    const done = new Set();
-    messages.forEach(message => {
-        if (message.to._id.toString() === req.user._id.toString()) {
-            if (!done.has(message.from._id.toString())) {
-                latestMessages.push(message);
-                done.add(message.from._id.toString());
+    // TODO: Also show the count of unread messages from each user
+    const latestMessages = await Message.aggregate([
+        {
+            $match: {
+                $or: [
+                    { to: req.user._id },
+                    { from: req.user._id }
+                ],
             }
-        }
-        else if (message.from._id.toString() === req.user._id.toString()) {
-            if (!done.has(message.to._id.toString())) {
-                latestMessages.push(message);
-                done.add(message.to._id.toString());
+        },
+        {
+            $lookup: {
+                localField: "from",
+                foreignField: "_id",
+                from: "users",
+                as: "from",
             }
-        }
-    });
+        },
+        {
+            $lookup: {
+                localField: "to",
+                foreignField: "_id",
+                from: "users",
+                as: "to",
+            }
+        },
+        {
+            $addFields: {
+                from: { $arrayElemAt: ["$from", 0] },
+                to: { $arrayElemAt: ["$to", 0] }
+            }
+        },
+        {
+            $project: {
+                "from.password": 0,
+                "from.bio": 0,
+                "to.password": 0,
+                "to.bio": 0,
+                media: 0
+            }
+        },
+        {
+            $sort: { createdAt: -1 }
+        },
+        {
+            $group: {
+                _id: {
+                    $cond: {
+                        if: { $eq: ["$from._id", req.user._id] },
+                        then: "$to._id",
+                        else: "$from._id"
+                    }
+                },
+                latestMessage: { $first: "$$ROOT" }
+            }
+        },
+        {
+            $skip: (page && (page - 1) * PAGE_SIZE) || 0
+        },
+        {
+            $limit: PAGE_SIZE
+        },
+    ]);
 
     res.json({ messages: latestMessages, page: page || 1 });
 });
