@@ -8,6 +8,7 @@ import Settings from "./views/Settings";
 import Requests from "./views/Requests";
 import People from "./views/People";
 import AuthContext from "./context/AuthContext";
+import "react-loading-skeleton/dist/skeleton.css";
 import "./App.css";
 
 function App() {
