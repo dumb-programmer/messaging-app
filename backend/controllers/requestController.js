@@ -7,6 +7,9 @@ const { Friend } = require("../models");
 const sendRequest = [isAuthorized, asyncHandler(async (req, res, next) => {
     // Check if users are already friends
     const { userId } = req.body;
+    if (!userId) {
+        return res.sendStatus(400);
+    }
     // TODO: optimize query
     const [res1, res2] = await Promise.all([
         Friend.findOne({ user1: req.user._id, user2: userId }),
@@ -51,13 +54,13 @@ const getPendingRequests = [isAuthorized, asyncHandler(async (req, res) => {
 const acceptRequest = [isAuthorized, asyncHandler(async (req, res) => {
     const { requestId } = req.params;
     try {
-        const request = await Request.findByIdAndDelete(requestId);
-        if (request && request.to.toString() === req.user._id.toString()) {
+        const request = await Request.findOneAndDelete({ _id: requestId, to: req.user._id });
+        if (request) {
             await Friend.create({ user1: req.user._id, user2: request.from });
             return res.sendStatus(200);
         }
         // NOTE: or send 403??
-        res.sendStatus(404);
+        return res.sendStatus(404);
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid id" });
