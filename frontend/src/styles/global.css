@@ -1,0 +1,15 @@
+.flex {
+    display: flex;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.gap-md {
+    gap: 0.8rem;
+}
+
+.break-work {
+    word-wrap: break-word;
+}

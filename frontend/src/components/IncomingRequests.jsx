@@ -19,11 +19,18 @@ const IncomingRequests = () => {
           <IncomingRequest
             key={request._id}
             request={request}
-            filterRequest={(requestId) =>
-              setData((data) => data.filter((data) => data._id !== requestId))
-            }
+            onSuccess={(requestId) => {
+              setData((data) => ({
+                requests: data.requests.filter(
+                  (request) => request._id !== requestId
+                ),
+              }));
+            }}
           />
         ))}
+        {data.requests.length === 0 && (
+          <h1 style={{ textAlign: "center" }}>All Caught Up</h1>
+        )}
       </div>
     );
   } else if (error) {

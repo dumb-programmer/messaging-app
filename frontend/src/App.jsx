@@ -10,6 +10,7 @@ import People from "./views/People";
 import AuthContext from "./context/AuthContext";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./App.css";
+import "./styles/global.css";
 
 function App() {
   const [auth, setAuth] = useState(

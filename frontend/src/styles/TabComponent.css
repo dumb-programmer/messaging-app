@@ -4,6 +4,7 @@
 
 .tab-header {
     display: flex;
+    border-bottom: 1px solid #eee;
 }
 
 .tab-header .tab {

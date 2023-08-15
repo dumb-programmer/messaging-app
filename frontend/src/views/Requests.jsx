@@ -4,14 +4,12 @@ import TabComponent from "../components/TabComponent";
 
 const Requests = () => {
   return (
-    <div>
-      <TabComponent
-        tabs={[
-          { label: "Incoming", body: <IncomingRequests /> },
-          { label: "Pending", body: <PendingRequests /> },
-        ]}
-      />
-    </div>
+    <TabComponent
+      tabs={[
+        { label: "Incoming", body: <IncomingRequests /> },
+        { label: "Pending", body: <PendingRequests /> },
+      ]}
+    />
   );
 };
 
