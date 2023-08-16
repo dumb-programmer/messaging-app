@@ -41,9 +41,16 @@ main {
 
 .message {
     display: flex;
+    gap: 1rem;
     align-items: center;
     margin-top: 10px;
     border-radius: 3px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.message p {
+    color: #999;
 }
 
 .message, .tab {
@@ -60,4 +67,9 @@ main {
     width: 80px;
     object-fit: cover;
     border-radius: 50%;
+}
+
+.avatar-sm {
+    height: 60px;
+    width: 60px;
 }
