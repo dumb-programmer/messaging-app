@@ -5,7 +5,7 @@ const bcryptjs = require("bcryptjs");
 const isAuthorized = require("../middlewares/isAuthorized");
 const verifyUserOwnership = require("../middlewares/verifyUserOwnership");
 const asyncHandler = require("../utils/asyncHandler");
-const { User } = require("../models");
+const { User, Friend } = require("../models");
 const multerSetup = require("../middlewares/multerSetup");
 const getHashedPassword = require("../utils/getHashedPassword");
 const storeAvatar = require("../utils/storeAvatar");
@@ -25,14 +25,14 @@ const validateUser = [
     body("avatar").optional().notEmpty(),
     (req, res, next) => {
         const { password } = req.body;
-        if (password && password !== "" || password === undefined) {
+        if (password && (password !== "" || password === undefined)) {
             return next();
         }
         res.status(400).json({ message: "Password is required" });
     },
     (req, res, next) => {
         const { password, newPassword } = req.body;
-        if (newPassword && newPassword !== "" || password === undefined) {
+        if (newPassword && (newPassword !== "" || password === undefined)) {
             return next();
         }
         res.status(400).json({ message: "New Password is required" });

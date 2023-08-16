@@ -40,34 +40,29 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
             }
         },
         {
-            $lookup: {
-                localField: "from",
-                foreignField: "_id",
-                from: "users",
-                as: "from"
+            $project: {
+                user: {
+                    $cond: {
+                        if: { $eq: ["$to", req.user._id] },
+                        then: "$from",
+                        else: "$to"
+                    }
+                },
+                content: 1,
+                createdAt: 1
             }
         },
         {
             $lookup: {
-                localField: "to",
+                localField: "user",
                 foreignField: "_id",
                 from: "users",
-                as: "to"
+                as: "user"
             }
         },
         {
             $addFields: {
-                from: { $arrayElemAt: ["$from", 0] },
-                to: { $arrayElemAt: ["$to", 0] }
-            }
-        },
-        {
-            $project: {
-                "from.password": 0,
-                "from.bio": 0,
-                "to.password": 0,
-                "to.bio": 0,
-                media: 0
+                user: { $arrayElemAt: ["$user", 0] }
             }
         },
         {
@@ -75,21 +70,16 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
         },
         {
             $group: {
-                _id: {
-                    $cond: {
-                        if: { $eq: ["$from._id", req.user._id] },
-                        then: "$to._id",
-                        else: "$from._id"
-                    }
-                },
+                _id: "$user._id",
                 latestMessage: { $first: "$$ROOT" }
             }
         },
         {
-            $skip: (page && (page - 1) * PAGE_SIZE) || 0
-        },
-        {
-            $limit: PAGE_SIZE
+            $project: {
+                _id: 0,
+                "latestMessage.user.password": 0,
+                "latestMessage.user.bio": 0
+            }
         }
     ]);
 

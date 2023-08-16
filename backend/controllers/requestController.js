@@ -1,39 +1,41 @@
 const isAuthorized = require("../middlewares/isAuthorized");
 const asyncHandler = require("../utils/asyncHandler");
 
-const { Request } = require("../models");
-const { Friend } = require("../models");
+const { Friend, Request, User } = require("../models");
 
 const sendRequest = [isAuthorized, asyncHandler(async (req, res, next) => {
     // Check if users are already friends
-    const { userId } = req.body;
-    if (!userId) {
-        return res.sendStatus(400);
+    const { username } = req.body;
+    if (!username || req.user.username === username) {
+        return res.send(400).json({ message:"username is required" });
     }
+    const userId = (await User.findOne({ username }))?._id;
+    if (!userId) {
+        return res.send(404).json({ message: "No such user exists" });
+    }
+    req.userId = userId;
     // TODO: optimize query
     const [res1, res2] = await Promise.all([
         Friend.findOne({ user1: req.user._id, user2: userId }),
         Friend.findOne({ user1: userId, user2: req.user._id })
     ]);
     if (res1 || res2) {
-        return res.status(400).json({ message: "Already friends" });
+        return res.status(409).json({ message: "Already friends" });
     }
     next();
 }), asyncHandler(async (req, res, next) => {
-    // Check if there's already a request from one of the users
-    const { userId } = req.body;
+    // Check if there's already a request from one of the user
     // TODO: optimize query
     const [res1, res2] = await Promise.all([
-        Request.findOne({ from: req.user._id, to: userId }),
-        Request.findOne({ from: userId, to: req.user._id })
+        Request.findOne({ from: req.user._id, to: req.userId }),
+        Request.findOne({ from: req.userId, to: req.user._id })
     ]);
     if (res1 || res2) {
         return res.status(409).json({ message: "Request already exists" });
     }
     next();
 }), asyncHandler(async (req, res) => {
-    const { userId } = req.body;
-    await Request.create({ to: userId, from: req.user._id });
+    await Request.create({ to: req.userId, from: req.user._id });
     res.sendStatus(200);
 })];
 
@@ -72,9 +74,10 @@ const acceptRequest = [isAuthorized, asyncHandler(async (req, res) => {
 const deleteRequest = [isAuthorized, async (req, res) => {
     const { requestId } = req.params;
     const request = await Request.findById(requestId);
+    console.log(request);
     if (request &&
-        (request.to.toString() === req.user._id.toString() ||
-            request.from.toString() === req.user._id.toString())
+        (request.to._id.toString() === req.user._id.toString() ||
+            request.from._id.toString() === req.user._id.toString())
     ) {
         await Request.deleteOne({ _id: requestId });
         return res.sendStatus(200);
