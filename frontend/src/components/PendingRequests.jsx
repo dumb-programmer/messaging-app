@@ -1,6 +1,7 @@
 import getPendingRequests from "../api/getPendingRequest";
 import useApi from "../hooks/useApi";
 import useAuthContext from "../hooks/useAuthContext";
+import useToastContext from "../hooks/useToastContext";
 import PendingRequest from "./PendingRequest";
 import RequestSkeleton from "./RequestSkeleton";
 
@@ -9,6 +10,7 @@ const PendingRequests = () => {
   const { data, setData, loading, error } = useApi(() =>
     getPendingRequests(auth.token)
   );
+  const Toast = useToastContext();
 
   if (loading) {
     return <RequestSkeleton />;
@@ -25,6 +27,11 @@ const PendingRequests = () => {
                   (request) => request._id !== requestId
                 ),
               }));
+              Toast.show({
+                type: Toast.SUCCESS,
+                message: "Request Cancelled",
+                duration: 3000,
+              });
             }}
           />
         ))}

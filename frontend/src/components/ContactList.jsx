@@ -3,6 +3,7 @@ import useApi from "../hooks/useApi";
 import getFriends from "../api/getFriends";
 import UnfriendConfirmationModal from "./UnfriendConfirmationModal";
 import { useState } from "react";
+import useToastContext from "../hooks/useToastContext";
 
 const ContactList = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -11,6 +12,7 @@ const ContactList = () => {
   const { data, setData, loading, error } = useApi(() =>
     getFriends(auth.token)
   );
+  const Toast = useToastContext();
 
   if (loading) {
     return <p>Loading...</p>;
@@ -63,6 +65,11 @@ const ContactList = () => {
               }));
               setSelectedFriend(null);
               setShowModal(false);
+              Toast.show({
+                type: Toast.SUCCESS,
+                message: "Removed friend",
+                duration: 3000,
+              });
             }}
             onCancel={() => setShowModal(false)}
           />

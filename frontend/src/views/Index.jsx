@@ -5,6 +5,7 @@ import PeoplesIcon from "../icons/PeoplesIcon";
 import SettingsIcon from "../icons/SettingsIcon";
 import "../styles/Index.css";
 import useAuthContext from "../hooks/useAuthContext";
+import ToastsContainer from "../components/ToastsContainer";
 
 const Index = () => {
   const { auth } = useAuthContext();
@@ -50,12 +51,19 @@ const Index = () => {
             alignItems: "center",
             position: "absolute",
             bottom: 0,
+            padding: 10,
+            gap: "0.8rem",
           }}
         >
           <img
             src={`http://localhost:3000/${avatar}`}
             className="avatar"
-            style={{ height: 60, width: 60 }}
+            style={{
+              height: 60,
+              width: 60,
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
           />
           <div>
             <h4>{`${firstName} ${lastName}`}</h4>
@@ -64,7 +72,9 @@ const Index = () => {
         </div>
       </div>
       <div className="view-container">
-        <Outlet />
+        <ToastsContainer>
+          <Outlet />
+        </ToastsContainer>
       </div>
     </main>
   );

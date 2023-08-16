@@ -2,14 +2,21 @@ import PropType from "prop-types";
 import useAuthContext from "../hooks/useAuthContext";
 import deleteRequest from "../api/deleteRequest";
 import acceptRequest from "../api/acceptRequest";
+import useToastContext from "../hooks/useToastContext";
 
 const IncomingRequest = ({ request, onSuccess }) => {
   const { auth } = useAuthContext();
+  const Toast = useToastContext();
 
   const handleDecline = async () => {
     const response = await deleteRequest(request._id, auth.token);
     if (response.ok) {
       onSuccess(request._id);
+      Toast.show({
+        type: Toast.SUCCESS,
+        message: "Request declined",
+        duration: 3000,
+      });
     }
   };
 
@@ -17,6 +24,11 @@ const IncomingRequest = ({ request, onSuccess }) => {
     const response = await acceptRequest(request._id, auth.token);
     if (response.ok) {
       onSuccess(request._id);
+      Toast.show({
+        type: Toast.SUCCESS,
+        message: "Request accepted",
+        duration: 3000,
+      });
     }
   };
 

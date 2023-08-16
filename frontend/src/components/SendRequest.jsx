@@ -1,42 +1,60 @@
 import { useState } from "react";
 import sendRequest from "../api/sendRequest";
 import useAuthContext from "../hooks/useAuthContext";
+import useToastContext from "../hooks/useToastContext";
 
 const SendRequest = () => {
   const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
   const { auth } = useAuthContext();
+  const Toast = useToastContext();
 
-  const handleSendRequest = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await sendRequest({ username }, auth.token);
       if (!response.ok) {
-        throw new Error({
-          message: "An unknown error has occurred",
-          content: response,
+        throw new Error("Error occurred", { cause: { response } });
+      } else {
+        Toast.show({
+          type: Toast.SUCCESS,
+          message: "Friend request sent",
+          duration: 3000,
         });
       }
     } catch (error) {
-      console.log(error);
-      switch (error.content.status) {
+      switch (error?.cause?.response?.status) {
         case 404:
-          setError("No such user exists, recheck the username");
+          Toast.show({
+            type: Toast.FAILURE,
+            message: "No user with this username exists",
+            duration: 3000,
+          });
           break;
         default:
-          setError(
-            "An unknown error has occurred, maybe you've already sent the request."
-          );
+          Toast.show({
+            type: Toast.FAILURE,
+            message:
+              "An Unkown error has occurred, be sure to check the username",
+            duration: 3000,
+          });
       }
     }
   };
   return (
-    <div
+    <form
       className="flex flex-column align-center gap-md"
       style={{ marginTop: 100, padding: "0 40px" }}
+      onSubmit={handleSubmit}
     >
       <h2>Add Friend</h2>
       <p>Enter the username of the user you want to friend</p>
-      <div className="flex" style={{ position: "relative", minWidth: "30vw" }}>
+      <div
+        className="flex"
+        style={{
+          position: "relative",
+          minWidth: "30vw",
+        }}
+      >
         <span
           style={{
             backgroundColor: "#eee",
@@ -59,10 +77,9 @@ const SendRequest = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        {error && <span className="error-message">{error}</span>}
       </div>
-      <button onClick={handleSendRequest}>Send</button>
-    </div>
+      <button type="submit">Send</button>
+    </form>
   );
 };
 
