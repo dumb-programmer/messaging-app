@@ -2,8 +2,24 @@
     display: flex;
 }
 
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
 .justify-end {
     justify-content: flex-end;
+}
+
+.align-center {
+    align-items: center;
 }
 
 .gap-md {

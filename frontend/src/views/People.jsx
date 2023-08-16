@@ -1,4 +1,5 @@
 import ContactList from "../components/ContactList";
+import SendRequest from "../components/SendRequest";
 import TabComponent from "../components/TabComponent";
 
 const People = () => {
@@ -9,7 +10,7 @@ const People = () => {
           { label: "Contacts List", body: <ContactList /> },
           {
             label: "Send Request",
-            body: <p>You can send request from here</p>,
+            body: <SendRequest />,
           },
         ]}
       />
