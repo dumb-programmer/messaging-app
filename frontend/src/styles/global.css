@@ -14,12 +14,20 @@
     justify-content: center;
 }
 
+.justify-between {
+    justify-content: space-between;
+}
+
 .justify-end {
     justify-content: flex-end;
 }
 
 .align-center {
     align-items: center;
+}
+
+.row-reverse {
+    flex-direction: row-reverse;
 }
 
 .gap-md {

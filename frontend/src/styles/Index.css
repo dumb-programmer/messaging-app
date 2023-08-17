@@ -47,10 +47,16 @@ main {
     border-radius: 3px;
     margin-bottom: 20px;
     padding: 10px;
+    text-decoration: none;
+    color: black;
 }
 
 .message p {
     color: #999;
+}
+
+.messages>.active {
+    background-color: #eee;
 }
 
 .message, .tab {
