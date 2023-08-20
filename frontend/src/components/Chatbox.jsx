@@ -14,6 +14,7 @@ import SendIcon from "../icons/SendIcon";
 import sendMessage from "../api/sendMessage";
 import useSocketContext from "../hooks/useSocketContext";
 import "../styles/Chatbox.css";
+import TypingIndicator from "./TypingIndicator";
 
 const Chatbox = () => {
   const { userId } = useParams();
@@ -115,6 +116,7 @@ const Chatbox = () => {
           ))}
       </div>
       <div className="chat-footer">
+        <TypingIndicator name={state.user.firstName} />
         <form onSubmit={onCreateMessage}>
           <div className="form-control">
             <input
@@ -122,7 +124,10 @@ const Chatbox = () => {
               placeholder="Message"
               style={{ width: "100%" }}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                socket.emit("typing", userId);
+                setMessage(e.target.value);
+              }}
             />
           </div>
           <button type="submit" className="flex justify-center align-center">

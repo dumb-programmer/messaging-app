@@ -28,9 +28,12 @@
 }
 
 .chat-footer {
-    position: relative;
     padding: 10px;
     background-color: #eee;
+}
+
+.chat-footer form {
+    position: relative;
 }
 
 .message-content {
@@ -65,8 +68,47 @@
 
 .chat-footer button {
     position: absolute;
-    right: 20px;
-    top: 15px;
+    right: 10px;
+    top: 5px;
     padding: 5px;
     border-radius: 5px;
+}
+
+.typing-indicator {
+    padding-bottom: 5px;
+    font-size: 0.8rem;
+    background-color: #eee;
+    transform: scale(0);
+    transition: transform 100ms;
+    transform: scale(1);
+}
+
+.typing-indicator>span {
+    margin-left: 5px;
+}
+
+.typing-indicator span[class^="dot"]::after {
+    content: ".";
+    display: inline-block;
+    animation-name: bounce;
+    animation-duration: 800ms;
+    animation-iteration-count: infinite;
+}
+
+.typing-indicator .dot-two::after {
+    animation-delay: 200ms;
+}
+
+.typing-indicator .dot-three:after {
+    animation-delay: 300ms;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0px);
+    }
+
+    to {
+        transform: translateY(-5px);
+    }
 }
