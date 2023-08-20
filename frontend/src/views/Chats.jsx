@@ -3,10 +3,41 @@ import useAuthContext from "../hooks/useAuthContext";
 import useApi from "../hooks/useApi";
 import getRelativeDate from "../utils/getRelativeDate";
 import { NavLink, Outlet } from "react-router-dom";
+import { useCallback } from "react";
+
+const sortMessagesByDate = (messages) =>
+  messages.sort(
+    (m1, m2) =>
+      new Date(m2.latestMessage.createdAt) -
+      new Date(m1.latestMessage.createdAt)
+  );
 
 const Chats = () => {
   const { auth } = useAuthContext();
-  const { data, loading, error } = useApi(() => getLatestChats(auth.token));
+  const { data, setData, loading, error } = useApi(() =>
+    getLatestChats(auth.token)
+  );
+
+  const updateLatestMessages = useCallback(
+    (newMessage) => {
+      setData((data) => {
+        const existingMessage = data.messages.filter(
+          (message) =>
+            message.latestMessage.user._id === newMessage.latestMessage.user._id
+        )[0];
+        if (existingMessage) {
+          const index = data.messages.indexOf(existingMessage);
+          data.messages[index] = newMessage;
+          data.messages = sortMessagesByDate(data.messages);
+          return { ...data };
+        }
+
+        const messages = sortMessagesByDate([...data.messages, newMessage]);
+        return { messages };
+      });
+    },
+    [setData]
+  );
 
   if (loading) {
     return <div>Loading...</div>;
@@ -48,7 +79,7 @@ const Chats = () => {
           ))}
         </div>
       </div>
-      <Outlet />
+      <Outlet context={{ updateLatestMessages }} />
     </div>
   );
 };

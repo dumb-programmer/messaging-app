@@ -1,9 +1,11 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
 import useApi from "../hooks/useApi";
 import getFriends from "../api/getFriends";
 import UnfriendConfirmationModal from "./UnfriendConfirmationModal";
-import { useState } from "react";
 import useToastContext from "../hooks/useToastContext";
+import ChatIcon from "../icons/ChatIcon";
 
 const ContactList = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -42,7 +44,12 @@ const ContactList = () => {
               </div>
             </div>
             <div style={{ display: "flex", gap: "1rem" }}>
-              <button>Chat</button>
+              <Link
+                to={`/${friend.user._id.toString()}`}
+                state={{ user: friend.user }}
+              >
+                <ChatIcon size={20} color="grey" strokeWidth="2px" />
+              </Link>
               <button
                 onClick={() => {
                   setSelectedFriend(friend);

@@ -3,7 +3,7 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     border-left: 2px solid #eee;
-    max-height: 100vh;
+    height: 100vh;
     overflow-y: scroll;
     overflow-x: hidden;
 }
