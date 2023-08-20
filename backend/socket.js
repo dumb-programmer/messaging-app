@@ -33,6 +33,10 @@ io.on("connection", socket => {
         delete users[socket.user._id.toString()];
         await User.updateOne({ _id: socket.user._id }, { lastSeen: new Date() });
     });
+    socket.on("typing", (userId) => {
+        const socketId = users[userId].socketId;
+        io.to(socketId).emit("typing");
+    });
 });
 
 io.listen(3001);
