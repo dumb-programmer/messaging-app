@@ -5,6 +5,7 @@ const fs = require("fs/promises");
 
 const { Message, Friend, MediaMeta } = require("../models");
 const storeMedia = require("../utils/storeMedia");
+const { io, getUsers } = require("../socket");
 
 const setupMulter = multer({ storage: multer.memoryStorage() }).array("media");
 
@@ -108,7 +109,7 @@ const getMessages = [isAuthorized, getLatestMessages, asyncHandler(async (req, r
                 { from: req.user._id, to: userId },
                 { from: userId, to: req.user._id }
             ]
-        }).populate("to", { password: 0, bio: 0 }).populate("from", { password: 0, bio: 0 }).sort({ createdAt: 1 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);
+        }).sort({ createdAt: 1 });
         res.json({ messages, page });
     } catch (error) {
         if (error.name === "CastError") {
@@ -134,7 +135,10 @@ const createMessage = [
         if (req.files) {
             media = await storeMedia(req.files, "/uploads/media", [req.user._id, to]);
         }
-        await Message.create({ from: req.user._id, to, content, media });
+        const message = await Message.create({ from: req.user._id, to, content, media });
+        const toSocket = getUsers()[to]?.socketId;
+        const fromSocket = getUsers()[req.user._id.toString()]?.socketId;
+        io.to(toSocket).to(fromSocket).emit("new message", message);
         res.sendStatus(200);
     })
 ];

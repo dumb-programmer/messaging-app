@@ -36,7 +36,7 @@ app.use(async (req, res, next) => {
         const token = authorization.split(" ")[1];
         const isTokenValid = jwt.verify(token, process.env.SECRET);
         if (isTokenValid) {
-            req.user = await User.findById(jwt.decode(token)._id);;
+            req.user = await User.findById(jwt.decode(token)._id);
         }
     }
     next();
