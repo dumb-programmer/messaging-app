@@ -11,7 +11,6 @@ import AuthContext from "./context/AuthContext";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./App.css";
 import "./styles/global.css";
-import Chatbox from "./components/Chatbox";
 
 function App() {
   const [auth, setAuth] = useState(
@@ -23,9 +22,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />}>
-            <Route path="/" element={<Chats />}>
-              <Route path="/:userId" element={<Chatbox />} />
-            </Route>
+            <Route path="/" element={<Chats />} />
             <Route path="/people" element={<People />} />
             <Route path="/requests" element={<Requests />} />
             <Route path="/settings" element={<Settings />} />

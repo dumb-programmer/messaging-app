@@ -6,7 +6,7 @@ import useAuthContext from "../hooks/useAuthContext";
 
 const SocketProvider = ({ children }) => {
   const { auth } = useAuthContext();
-  const [socket, setSocket] = useState();
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     const newSocket = new io("http://localhost:3001/", {

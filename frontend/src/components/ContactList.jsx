@@ -44,11 +44,8 @@ const ContactList = () => {
               </div>
             </div>
             <div style={{ display: "flex", gap: "1rem" }}>
-              <Link
-                to={`/${friend.user._id.toString()}`}
-                state={{ user: friend.user }}
-              >
-                <ChatIcon size={20} color="grey" strokeWidth="2px" />
+              <Link to="/" state={{ user: friend.user }}>
+                <ChatIcon size={20} color="grey" strokeWidth={2} />
               </Link>
               <button
                 onClick={() => {
