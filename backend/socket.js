@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const { User } = require("./models");
+const { User, Friend } = require("./models");
 const jwt = require("jsonwebtoken");
 
 const io = new Server({
@@ -28,13 +28,54 @@ io.use(async (socket, next) => {
     next();
 });
 
-io.on("connection", socket => {
+io.on("connection", async socket => {
+    const friends = await Friend.aggregate([
+        {
+            $match: {
+                $or: [
+                    { user1: socket.user._id },
+                    { user2: socket.user._id }
+                ]
+            }
+        },
+        {
+            $project: {
+                user: {
+                    $cond: {
+                        if: { $eq: [socket.user._id, "$user1"] },
+                        then: "$user2",
+                        else: "$user1"
+                    }
+                }
+            }
+        }
+    ]);
+
+    // Broadcast the user's online status to their friends
+    friends.forEach(({ user: friendId }) => {
+        const friendSocketId = users[friendId.toString()]?.socketId;
+        if (friendSocketId) {
+            io.to(friendSocketId).emit("user status changed", { userId: socket.user._id.toString(), type: "online" });
+        }
+    });
+
     socket.on("disconnect", async () => {
         delete users[socket.user._id.toString()];
-        await User.updateOne({ _id: socket.user._id }, { lastSeen: new Date() });
+
+        const lastSeen = new Date();
+        await User.updateOne({ _id: socket.user._id }, { lastSeen, status: "offline" });
+
+        // Broadcast the user's offline status to their friends
+        friends.forEach(({ user: friendId }) => {
+            const friendSocketId = users[friendId.toString()]?.socketId;
+            if (friendSocketId) {
+                io.to(friendSocketId).emit("user status changed", { userId: socket.user._id.toString(), type: "offline", lastSeen });
+            }
+        });
     });
-    socket.on("typing", (userId) => {
-        const socketId = users[userId].socketId;
+
+    socket.on("typing", (toUserId) => {
+        const socketId = users[toUserId]?.socketId;
         io.to(socketId).emit("typing");
     });
 });
