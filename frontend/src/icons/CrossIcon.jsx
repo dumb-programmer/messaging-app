@@ -1,6 +1,6 @@
 import PropType from "prop-types";
 
-const SendIcon = ({ size, color, strokeWidth }) => {
+const CrossIcon = ({ size, color, strokeWidth }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,18 +12,18 @@ const SendIcon = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="feather feather-send"
+      className="feather feather-cross"
     >
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
     </svg>
   );
 };
 
-SendIcon.propTypes = {
+CrossIcon.propTypes = {
   size: PropType.number,
   color: PropType.string,
   strokeWidth: PropType.number,
 };
 
-export default SendIcon;
+export default CrossIcon;

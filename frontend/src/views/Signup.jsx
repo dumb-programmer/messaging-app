@@ -118,7 +118,6 @@ const Signup = () => {
                   ...data,
                   avatar: e.target.files[0],
                 });
-                console.log(e.target.files[0].stream());
               }}
               ref={fileUploadRef}
               type="file"

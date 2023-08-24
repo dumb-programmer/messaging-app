@@ -37,3 +37,24 @@
 .break-work {
     word-wrap: break-word;
 }
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn {
+    all: unset;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 100ms;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.secondary-btn:hover {
+    background-color: #eee;
+}

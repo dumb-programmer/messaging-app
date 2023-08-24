@@ -1,6 +1,6 @@
 import PropType from "prop-types";
 
-const SendIcon = ({ size, color, strokeWidth }) => {
+const PaperClipIcon = ({ size, color, strokeWidth }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,18 +12,17 @@ const SendIcon = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="feather feather-send"
+      className="feather feather-paperclip"
     >
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
     </svg>
   );
 };
 
-SendIcon.propTypes = {
+PaperClipIcon.propTypes = {
   size: PropType.number,
   color: PropType.string,
   strokeWidth: PropType.number,
 };
 
-export default SendIcon;
+export default PaperClipIcon;

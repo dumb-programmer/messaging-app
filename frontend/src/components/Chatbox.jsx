@@ -9,6 +9,9 @@ import sendMessage from "../api/sendMessage";
 import useSocketContext from "../hooks/useSocketContext";
 import TypingIndicator from "./TypingIndicator";
 import ChatHeader from "./ChatHeader";
+import FileUpload from "./FileUpload";
+import FilesPreview from "./FilesPreview";
+import File from "./File";
 import "../styles/Chatbox.css";
 
 const Chatbox = ({ user, updateLatestMessages, onBack }) => {
@@ -20,10 +23,18 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
   );
   const [message, setMessage] = useState("");
   const chatbodyRef = useRef();
+  const [filesPreview, setFilesPreview] = useState([]);
+  const [file, setFile] = useState([]);
 
   const onCreateMessage = async (e) => {
     e.preventDefault();
-    await sendMessage({ to: user._id, content: message }, auth.token);
+    const formData = new FormData();
+    formData.append("to", user._id);
+    formData.append("content", message);
+    file.forEach((file) => formData.append("file", file.file));
+    await sendMessage(formData, auth.token);
+    setFile([]);
+    setFilesPreview([]);
     setMessage("");
   };
 
@@ -80,9 +91,33 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
                   {getRelativeDate(new Date(message.createdAt))}
                 </span>
                 <p className="message-content">{message.content}</p>
+                {message?.media?.map((item, idx) => (
+                  <File
+                    key={idx}
+                    item={item}
+                    isSender={
+                      message.from.toString() === auth.user._id.toString()
+                    }
+                  />
+                ))}
               </div>
             </div>
           ))}
+        {filesPreview.length > 0 && (
+          <FilesPreview
+            files={filesPreview}
+            removeFile={(fileId) => {
+              setFilesPreview((files) =>
+                files.filter((file) => file.id !== fileId)
+              );
+              setFile((files) => files.filter((file) => file.id !== fileId));
+            }}
+            resetFiles={() => {
+              setFilesPreview([]);
+              setFile([]);
+            }}
+          />
+        )}
       </div>
       <div className="chat-footer">
         <TypingIndicator name={user.firstName} />
@@ -99,9 +134,29 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
               }}
             />
           </div>
-          <button type="submit" className="flex justify-center align-center">
-            <SendIcon color="white" size={20} strokeWidth="2px" />
-          </button>
+          <div
+            style={{
+              position: "absolute",
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              right: 0,
+            }}
+          >
+            <FileUpload
+              addFile={(newPreview, newMedia) => {
+                const id = crypto.randomUUID();
+                setFilesPreview((previews) => [
+                  ...previews,
+                  { id, preview: newPreview },
+                ]);
+                setFile((file) => [...file, { id, file: newMedia }]);
+              }}
+            />
+            <button type="submit" className="flex justify-center align-center">
+              <SendIcon color="white" size={20} strokeWidth={2} />
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import PropType from "prop-types";
 
-const SendIcon = ({ size, color, strokeWidth }) => {
+const DownloadIcon = ({ size, color, strokeWidth }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,18 +12,19 @@ const SendIcon = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="feather feather-send"
+      className="feather feather-download"
     >
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
     </svg>
   );
 };
 
-SendIcon.propTypes = {
+DownloadIcon.propTypes = {
   size: PropType.number,
   color: PropType.string,
   strokeWidth: PropType.number,
 };
 
-export default SendIcon;
+export default DownloadIcon;

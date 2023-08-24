@@ -14,7 +14,7 @@ const sortMessagesByDate = (messages) =>
       new Date(m1.latestMessage.createdAt)
   );
 
-const getDate = () => new Date();
+const getDate = () => new Date().toISOString();
 
 const Chats = () => {
   const { auth } = useAuthContext();
@@ -71,7 +71,7 @@ const Chats = () => {
         const newUser = {
           ...user,
           status: socketData.type,
-          latestSeen: getDate(),
+          lastSeen: getDate(),
         };
         updateUser(newUser);
         if (selectedUser._id === newUser._id) {
