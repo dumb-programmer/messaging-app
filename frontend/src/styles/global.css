@@ -58,3 +58,8 @@
 .secondary-btn:hover {
     background-color: #eee;
 }
+
+.danger-btn {
+    background-color: red !important;
+    color: white !important;
+}

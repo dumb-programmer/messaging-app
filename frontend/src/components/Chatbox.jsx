@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import useApi from "../hooks/useApi";
 import getMessages from "../api/getMessages";
 import useAuthContext from "../hooks/useAuthContext";
-import getRelativeDate from "../utils/getRelativeDate";
 import SendIcon from "../icons/SendIcon";
 import sendMessage from "../api/sendMessage";
 import useSocketContext from "../hooks/useSocketContext";
@@ -11,7 +10,7 @@ import TypingIndicator from "./TypingIndicator";
 import ChatHeader from "./ChatHeader";
 import FileUpload from "./FileUpload";
 import FilesPreview from "./FilesPreview";
-import File from "./File";
+import Message from "./Message";
 import "../styles/Chatbox.css";
 
 const Chatbox = ({ user, updateLatestMessages, onBack }) => {
@@ -31,7 +30,7 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
     const formData = new FormData();
     formData.append("to", user._id);
     formData.append("content", message);
-    file.forEach((file) => formData.append("file", file.file));
+    file.forEach((file) => formData.append("media", file.file));
     await sendMessage(formData, auth.token);
     setFile([]);
     setFilesPreview([]);
@@ -56,6 +55,12 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
       updateLatestMessages({ latestMessage: { ...message, user } });
     });
 
+    socket.on("delete message", (messageId) => {
+      setData((data) => ({
+        messages: data.messages.filter((message) => message._id !== messageId),
+      }));
+    });
+
     return () => {
       socket.off("new message");
     };
@@ -72,36 +77,7 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
         {loading && <p>Loading...</p>}
         {data &&
           data.messages.map((message) => (
-            <div
-              key={message._id}
-              className={`message-container ${
-                message.from.toString() === auth.user._id.toString()
-                  ? "justify-end"
-                  : ""
-              }`}
-            >
-              <div
-                className={`chat-message ${
-                  message.from.toString() === auth.user._id.toString()
-                    ? "chat-message__right"
-                    : "chat-message__left"
-                }`}
-              >
-                <span className="message-meta">
-                  {getRelativeDate(new Date(message.createdAt))}
-                </span>
-                <p className="message-content">{message.content}</p>
-                {message?.media?.map((item, idx) => (
-                  <File
-                    key={idx}
-                    item={item}
-                    isSender={
-                      message.from.toString() === auth.user._id.toString()
-                    }
-                  />
-                ))}
-              </div>
-            </div>
+            <Message key={message._id} message={message} />
           ))}
         {filesPreview.length > 0 && (
           <FilesPreview
