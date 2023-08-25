@@ -51,7 +51,7 @@ io.on("connection", async socket => {
         }
     ]);
 
-    // Broadcast the user's online status to their friends
+    // Broadcast user's online status to their friends
     friends.forEach(({ user: friendId }) => {
         const friendSocketId = users[friendId.toString()]?.socketId;
         if (friendSocketId) {
@@ -65,7 +65,7 @@ io.on("connection", async socket => {
         const lastSeen = new Date();
         await User.updateOne({ _id: socket.user._id }, { lastSeen, status: "offline" });
 
-        // Broadcast the user's offline status to their friends
+        // Broadcast user's offline status to their friends
         friends.forEach(({ user: friendId }) => {
             const friendSocketId = users[friendId.toString()]?.socketId;
             if (friendSocketId) {

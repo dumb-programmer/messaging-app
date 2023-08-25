@@ -168,10 +168,10 @@ const deleteMessage = [
         const { messageId } = req.params;
         try {
             const message = await Message.findById(messageId);
-            console.log(messageId);
             if (!message) {
                 return res.sendStatus(404);
             }
+            // current user is the sender of the message
             if (message.from.toString() === req.user._id.toString()) {
                 if (message.media.length > 0) {
                     // TODO: Maybe delete media and message at the same time??
@@ -185,6 +185,9 @@ const deleteMessage = [
                     }));
                 }
                 await Message.deleteOne({ _id: messageId });
+                const toSocket = getUsers()[message.to.toString()]?.socketId;
+                const fromSocket = getUsers()[req.user._id.toString()]?.socketId;
+                io.to(toSocket).to(fromSocket).emit("delete message", message._id.toString());
                 return res.sendStatus(200);
             }
             res.sendStatus(403);
