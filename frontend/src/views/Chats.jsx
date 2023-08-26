@@ -102,7 +102,11 @@ const Chats = () => {
             <div
               onClick={() => setSelectedUser(message.latestMessage.user)}
               key={message.latestMessage._id}
-              className="message flex"
+              className={`message flex ${
+                selectedUser?._id === message.latestMessage.user._id
+                  ? "active"
+                  : ""
+              }`}
             >
               <img
                 src={`http://localhost:3000/${message.latestMessage.user.avatar}`}

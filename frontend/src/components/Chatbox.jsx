@@ -63,6 +63,7 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
 
     return () => {
       socket.off("new message");
+      socket.off("delete message");
     };
   }, [socket, setData, user, updateLatestMessages]);
 
@@ -77,7 +78,21 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
         {loading && <p>Loading...</p>}
         {data &&
           data.messages.map((message) => (
-            <Message key={message._id} message={message} />
+            <Message
+              key={message._id}
+              message={message}
+              updateMessage={(messageData, messageId) => {
+                setData((data) => {
+                  const messages = data.messages.map((message) => {
+                    if (message._id === messageId) {
+                      return { ...message, ...messageData };
+                    }
+                    return message;
+                  });
+                  return { messages };
+                });
+              }}
+            />
           ))}
         {filesPreview.length > 0 && (
           <FilesPreview

@@ -1,11 +1,14 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import getRelativeDate from "../utils/getRelativeDate";
 import File from "./File";
 import useAuthContext from "../hooks/useAuthContext";
 import MessageDropdown from "./MessageDropdown";
+import EditMessage from "./EditMessage";
 
-const Message = ({ message }) => {
+const Message = ({ message, updateMessage }) => {
   const { auth } = useAuthContext();
+  const [edit, setEdit] = useState(false);
 
   return (
     <div
@@ -26,18 +29,42 @@ const Message = ({ message }) => {
           {getRelativeDate(new Date(message.createdAt))}
         </span>
         <div className="message-content">
-          <p>{message.content}</p>
-          {message.from === auth.user._id && (
-            <MessageDropdown messageId={message._id} />
+          {!edit ? (
+            <>
+              <p>{message.content}</p>
+              {message.from === auth.user._id && (
+                <MessageDropdown
+                  messageId={message._id}
+                  onEdit={() => setEdit(true)}
+                />
+              )}
+            </>
+          ) : (
+            <EditMessage
+              message={message}
+              onSuccess={(data) => {
+                updateMessage(data, message._id);
+                setEdit(false);
+              }}
+              onCancel={() => setEdit(false)}
+            />
           )}
         </div>
-        {message?.media?.map((item, idx) => (
-          <File
-            key={idx}
-            item={item}
-            isSender={message.from.toString() === auth.user._id.toString()}
-          />
-        ))}
+        <div>
+          {message?.media?.map((item, idx) => (
+            <File
+              key={idx}
+              messageId={message._id}
+              item={item}
+              onDelete={(file) => {
+                const newFiles = message.media.filter(
+                  (media) => media !== file
+                );
+                updateMessage({ media: newFiles }, message._id);
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -45,6 +72,7 @@ const Message = ({ message }) => {
 
 Message.propTypes = {
   message: PropTypes.object,
+  updateMessage: PropTypes.func,
 };
 
 export default Message;

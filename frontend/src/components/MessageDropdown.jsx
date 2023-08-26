@@ -5,7 +5,7 @@ import DeleteMessageConfirmationModal from "./DeleteMessageConfirmationModal";
 import useToastContext from "../hooks/useToastContext";
 import { createPortal } from "react-dom";
 
-const MessageDropdown = ({ messageId }) => {
+const MessageDropdown = ({ messageId, onEdit }) => {
   const [open, setOpen] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const Toast = useToastContext();
@@ -34,7 +34,7 @@ const MessageDropdown = ({ messageId }) => {
       </button>
       {open && (
         <ul className="dropdown">
-          <li>Edit</li>
+          <li onClick={onEdit}>Edit</li>
           <li onClick={() => setShowDeleteConfirmation(true)}>Delete</li>
         </ul>
       )}
@@ -59,6 +59,7 @@ const MessageDropdown = ({ messageId }) => {
 
 MessageDropdown.propTypes = {
   messageId: PropTypes.string,
+  onEdit: PropTypes.func,
 };
 
 export default MessageDropdown;

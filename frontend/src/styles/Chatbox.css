@@ -82,6 +82,11 @@
     max-width: fit-content;
 }
 
+.message-content {
+    display: flex;
+    justify-content: space-between;
+}
+
 .chat-message__left .message-content {
     border-bottom-left-radius: 20px;
     background-color: #eee;
@@ -92,6 +97,13 @@
     background-color: #466543;
     color: whitesmoke;
     border-bottom-right-radius: 20px;
+}
+
+.message-media {
+    border: 3px solid #466543;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 10px 0;
 }
 
 .message-timestamp {
