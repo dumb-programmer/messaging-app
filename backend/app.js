@@ -5,9 +5,10 @@ const RateLimit = require("express-rate-limit");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const { unlink } = require("fs/promises");
 
 const User = require("./models/user");
-const { MediaMeta } = require("./models");
+const { MediaMeta, Message } = require("./models");
 const isAuthorized = require("./middlewares/isAuthorized");
 const asyncHandler = require("./utils/asyncHandler");
 
@@ -42,7 +43,7 @@ app.use(async (req, res, next) => {
     next();
 });
 
-app.use("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
+app.get("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
     const { fileName } = req.params;
     const fileMeta = await MediaMeta.findOne({ fileName });
     if (!fileMeta) {
@@ -50,6 +51,26 @@ app.use("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res,
     }
     if (fileMeta.owners.includes(req.user._id)) {
         return res.sendFile(`${__dirname}${req.originalUrl}`);
+    }
+    res.sendStatus(403);
+})]);
+
+app.delete("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
+    const { fileName } = req.params;
+    const { messageId } = req.body;
+    const fileMeta = await MediaMeta.findOne({ fileName });
+    if (!fileMeta) {
+        return res.sendStatus(404);
+    }
+    const message = await Message.findById(messageId);
+    if (!message) {
+        return res.sendStatus(404);
+    }
+    if (fileMeta.owners.includes(req.user._id) && message.from.toString() === req.user._id.toString()) {
+        await unlink(`${__dirname}${req.originalUrl}`);
+        await Message.updateOne({ _id: messageId }, { media: message.media.filter(media => media !== req.originalUrl) });
+        await MediaMeta.deleteOne({ fileName });
+        return res.sendStatus(200);
     }
     res.sendStatus(403);
 })]);

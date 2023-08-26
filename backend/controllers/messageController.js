@@ -2,6 +2,7 @@ const multer = require("multer");
 const isAuthorized = require("../middlewares/isAuthorized");
 const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
+const { body, validationResult } = require("express-validator");
 
 const { Message, Friend, MediaMeta } = require("../models");
 const storeMedia = require("../utils/storeMedia");
@@ -41,6 +42,9 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
             }
         },
         {
+            $sort: { createdAt: -1 }
+        },
+        {
             $project: {
                 user: {
                     $cond: {
@@ -65,9 +69,6 @@ const getLatestMessages = asyncHandler(async (req, res, next) => {
             $addFields: {
                 user: { $arrayElemAt: ["$user", 0] }
             }
-        },
-        {
-            $sort: { createdAt: -1 }
         },
         {
             $group: {
@@ -145,19 +146,33 @@ const createMessage = [
 
 const updateMessage = [
     isAuthorized,
-    setupMulter,
-    asyncHandler(async (req, res) => {
-        const { messageId } = req.params;
-        const message = await Message.findById(messageId);
-        if (!message) {
-            return res.sendStatus(404);
+    body("content").notEmpty().withMessage("Content can't be empty"),
+    (req, res, next) => {
+        // TODO: turn it into a generic middleware
+        const result = validationResult(req);
+        if (result.isEmpty()) {
+            return next();
         }
-        if (message.from.toString() === req.user._id.toString()) {
-            const { content } = req.body;
-            await Message.updateOne({ _id: messageId }, { content });
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(403);
+        res.status(403).json({ message: result.array()[0].msg });
+    },
+    asyncHandler(async (req, res, next) => {
+        const { messageId } = req.params;
+        try {
+            const message = await Message.findById(messageId);
+            if (!message) {
+                return res.sendStatus(404);
+            } else if (message.from.toString() === req.user._id.toString()) {
+                const { content } = req.body;
+                await Message.updateOne({ _id: messageId }, { content });
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(403);
+            }
+        } catch (error) {
+            if (error.name === "CastError") {
+                return res.status(400).json({ message: "Invalid messageId" });
+            }
+            next(error);
         }
     })
 ];
