@@ -12,6 +12,7 @@ import FileUpload from "./FileUpload";
 import FilesPreview from "./FilesPreview";
 import Message from "./Message";
 import "../styles/Chatbox.css";
+import MessagesSkeleton from "./MessagesSkeleton";
 
 const Chatbox = ({ user, updateLatestMessages, onBack }) => {
   const { auth } = useAuthContext();
@@ -75,7 +76,7 @@ const Chatbox = ({ user, updateLatestMessages, onBack }) => {
     <div className="chatbox">
       <ChatHeader user={user} onBack={onBack} />
       <div className="chat-body" ref={chatbodyRef}>
-        {loading && <p>Loading...</p>}
+        {loading && <MessagesSkeleton />}
         {data &&
           data.messages.map((message) => (
             <Message

@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import useSocketContext from "../hooks/useSocketContext";
 import ChatBox from "../components/Chatbox";
+import ChatSkeleton from "../components/ChatSkeleton";
 
 const sortMessagesByDate = (messages) =>
   messages.sort(
@@ -90,7 +91,7 @@ const Chats = () => {
       <div style={{ padding: 10, flex: 1 }}>
         <h2>Chats</h2>
         <div className="messages">
-          {loading && <div>Loading...</div>}
+          {loading && <ChatSkeleton />}
           {error && <div>Error</div>}
           {data?.messages?.map((message) => (
             <div

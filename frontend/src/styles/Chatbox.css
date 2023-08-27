@@ -6,6 +6,8 @@
     height: 100vh;
     overflow: hidden;
     position: relative;
+    transform-origin: right;
+    animation: slide-left 200ms ease-in;
 }
 
 .chat-header {
@@ -118,10 +120,6 @@
     display: flex;
     justify-content: flex-end;
     transition: opacity 300ms;
-}
-
-.message-content .delete-file-btn-container {
-    /* background: linear-gradient(black, white); */
 }
 
 .message-media:hover .delete-file-btn-container {
@@ -242,6 +240,28 @@
 
     to {
         transform: scaleY(1);
+    }
+}
+
+@keyframes slide-left {
+    from {
+        transform: scaleX(0);
+    }
+
+    25% {
+        transform: scaleX(0.25);
+    }
+
+    50% {
+        transform: scaleX(0.5);
+    }
+
+    75% {
+        transform: scaleX(0.75);
+    }
+
+    to {
+        transform: scaleX(1);
     }
 }
 
