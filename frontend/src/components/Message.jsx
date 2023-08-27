@@ -28,32 +28,35 @@ const Message = ({ message, updateMessage }) => {
         <span className="message-meta">
           {getRelativeDate(new Date(message.createdAt))}
         </span>
-        <div className="message-content">
-          {!edit ? (
-            <>
-              <p>{message.content}</p>
-              {message.from === auth.user._id && (
-                <MessageDropdown
-                  messageId={message._id}
-                  onEdit={() => setEdit(true)}
-                />
-              )}
-            </>
-          ) : (
-            <EditMessage
-              message={message}
-              onSuccess={(data) => {
-                updateMessage(data, message._id);
-                setEdit(false);
-              }}
-              onCancel={() => setEdit(false)}
-            />
-          )}
-        </div>
+        {message.content && (
+          <div className="message-content">
+            {!edit ? (
+              <>
+                <p>{message.content}</p>
+                {message.from === auth.user._id && (
+                  <MessageDropdown
+                    messageId={message._id}
+                    onEdit={() => setEdit(true)}
+                  />
+                )}
+              </>
+            ) : (
+              <EditMessage
+                message={message}
+                onSuccess={(data) => {
+                  updateMessage(data, message._id);
+                  setEdit(false);
+                }}
+                onCancel={() => setEdit(false)}
+              />
+            )}
+          </div>
+        )}
         <div>
           {message?.media?.map((item, idx) => (
             <File
               key={idx}
+              isOwner={auth.user._id === message.from}
               messageId={message._id}
               item={item}
               onDelete={(file) => {

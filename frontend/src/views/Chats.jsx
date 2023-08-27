@@ -85,19 +85,13 @@ const Chats = () => {
     };
   }, [socket, updateUser, selectedUser, data]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error</div>;
-  }
-
   return (
     <div className="flex" style={{ height: "100vh" }}>
       <div style={{ padding: 10, flex: 1 }}>
         <h2>Chats</h2>
         <div className="messages">
+          {loading && <div>Loading...</div>}
+          {error && <div>Error</div>}
           {data?.messages?.map((message) => (
             <div
               onClick={() => setSelectedUser(message.latestMessage.user)}

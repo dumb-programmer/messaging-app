@@ -62,6 +62,7 @@
 }
 
 .message-content {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 10px;
@@ -100,10 +101,35 @@
 }
 
 .message-media {
+    position: relative;
     border: 3px solid #466543;
     border-radius: 5px;
     overflow: hidden;
     margin: 10px 0;
+}
+
+.delete-file-btn-container {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2));
+    display: flex;
+    justify-content: flex-end;
+    transition: opacity 300ms;
+}
+
+.message-content .delete-file-btn-container {
+    /* background: linear-gradient(black, white); */
+}
+
+.message-media:hover .delete-file-btn-container {
+    opacity: 1;
+}
+
+.message-content:hover .delete-file-btn-container {
+    opacity: 1;
 }
 
 .message-timestamp {

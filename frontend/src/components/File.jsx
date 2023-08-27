@@ -1,28 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import useAuthContext from "../hooks/useAuthContext";
 import getMedia from "../api/getMedia";
 import DownloadIcon from "../icons/DownloadIcon";
-import deleteMedia from "../api/deleteMedia";
+import FileDropdown from "./FileDropdown";
 
-const File = ({ messageId, item, onDelete }) => {
+const File = ({ isOwner, messageId, item, onDelete }) => {
   const [file, setFile] = useState(null);
   const { auth } = useAuthContext();
 
-  const handleFileDelete = async () => {
-    try {
-      await deleteMedia(item, { messageId }, auth.token);
-      onDelete(item);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     getMedia(item, auth.token).then((res) =>
-      res.blob().then((blob) => setFile(blob))
+      res
+        .blob()
+        .then((blob) =>
+          setFile({ url: URL.createObjectURL(blob), type: blob.type })
+        )
     );
-  }, [item, auth.token]);
+  }, [item, auth?.token]);
+
+  const DeleteBtn = useMemo(
+    () =>
+      isOwner ? (
+        <FileDropdown messageId={messageId} file={item} onDelete={onDelete} />
+      ) : null,
+    [isOwner, messageId, item, onDelete]
+  );
 
   if (!file) {
     return null;
@@ -32,10 +35,10 @@ const File = ({ messageId, item, onDelete }) => {
     return (
       <div className="message-media">
         <img
-          src={URL.createObjectURL(file)}
+          src={file.url}
           style={{ maxWidth: "100%", maxHeight: 200, objectFit: "contain" }}
         />
-        <button onClick={handleFileDelete}>Delete</button>
+        {DeleteBtn}
       </div>
     );
   } else {
@@ -50,18 +53,19 @@ const File = ({ messageId, item, onDelete }) => {
         }}
       >
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <a href={URL.createObjectURL(file)}>
+          <a href={file.url}>
             <DownloadIcon size={20} color="white" strokeWidth={2} />
           </a>
           <p>{item.split("/")[3]}</p>
+          {DeleteBtn}
         </div>
-        <button onClick={handleFileDelete}>Delete</button>
       </div>
     );
   }
 };
 
 File.propTypes = {
+  isOwner: PropTypes.bool,
   messageId: PropTypes.string,
   item: PropTypes.string,
   onDelete: PropTypes.func,
