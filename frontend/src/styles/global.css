@@ -53,6 +53,12 @@
     justify-content: center;
     align-items: center;
     border-radius: 5px;
+    font-size: 0.8rem;
+}
+
+.primary-btn {
+    background-color: #466543;
+    color: #fff;
 }
 
 .secondary-btn:hover {

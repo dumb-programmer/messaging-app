@@ -26,13 +26,6 @@ input, textarea {
     min-height: 100px;
 }
 
-button[type="submit"] {
-    background-color: #466543;
-    color: #fff;
-    border: none;
-    padding: 10px;
-}
-
 .artwork {
     background-image: url("../assets/artwork.jpg");
     background-repeat: no-repeat;

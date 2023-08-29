@@ -78,7 +78,9 @@ const SendRequest = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <button type="submit">Send</button>
+      <button type="submit" className="btn primary-btn">
+        Send
+      </button>
     </form>
   );
 };

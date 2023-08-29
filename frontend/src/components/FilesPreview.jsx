@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Carousal from "./Carousal";
 import CrossIcon from "../icons/CrossIcon";
 import TrashIcon from "../icons/TrashIcon";
@@ -31,6 +31,7 @@ const FilesPreview = ({ files, removeFile, resetFiles }) => {
 FilesPreview.propTypes = {
   files: PropTypes.array,
   removeFile: PropTypes.func,
+  resetFiles: PropTypes.func,
 };
 
 export default FilesPreview;

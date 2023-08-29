@@ -99,7 +99,9 @@ const Login = () => {
             />
             <span className="error-message">{errors.password}</span>
           </div>
-          <button type="submit">Submit</button>
+          <button type="submit" className="btn primary-btn">
+            Submit
+          </button>
           <p>
             {`Don't have an account`} <Link to="/signup">signup</Link>
           </p>

@@ -42,13 +42,27 @@ const EditMessage = ({ message, onSuccess, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea onChange={handleTextInput} value={data.content}></textarea>
-      <div className="flex gap-md justify-end">
-        <button type="button" onClick={onCancel}>
+    <form onSubmit={handleSubmit} style={{ position: "relative" }}>
+      <textarea
+        onChange={handleTextInput}
+        value={data.content}
+        style={{ minHeight: 100 }}
+      ></textarea>
+      <div
+        className="flex gap-md justify-end"
+        style={{ position: "absolute", bottom: 10, right: 5 }}
+      >
+        <button
+          className="btn secondary-btn"
+          style={{ color: "black", fontSize: "0.7rem" }}
+          type="button"
+          onClick={onCancel}
+        >
           Cancel
         </button>
-        <button type="submit">Submit</button>
+        <button type="submit" className="btn primary-btn">
+          Submit
+        </button>
       </div>
     </form>
   );

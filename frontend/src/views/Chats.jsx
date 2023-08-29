@@ -47,6 +47,25 @@ const Chats = () => {
     [setData]
   );
 
+  const replaceLatestMessage = useCallback(
+    (newMessage) => {
+      setData((data) => {
+        const message = data.messages.filter(
+          (message) =>
+            message.latestMessage.user._id === newMessage.latestMessage.user._id
+        )[0];
+        if (message) {
+          const index = data.messages.indexOf(message);
+          data.messages[index] = newMessage;
+          data.messages = sortMessagesByDate(data.messages);
+          return { ...data };
+        }
+        return data;
+      });
+    },
+    [setData]
+  );
+
   const updateUser = useCallback(
     (user) => {
       const messages = sortMessagesByDate(
@@ -75,7 +94,7 @@ const Chats = () => {
           lastSeen: getDate(),
         };
         updateUser(newUser);
-        if (selectedUser._id === newUser._id) {
+        if (selectedUser?._id === newUser._id) {
           setSelectedUser(newUser);
         }
       }
@@ -128,6 +147,7 @@ const Chats = () => {
           user={selectedUser}
           updateUser={updateUser}
           updateLatestMessages={updateLatestMessages}
+          replaceLatestMessage={replaceLatestMessage}
           onBack={() => setSelectedUser(null)}
         />
       )}

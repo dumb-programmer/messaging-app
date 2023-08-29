@@ -190,7 +190,9 @@ const Signup = () => {
             ></textarea>
             <span className="error-message">{errors.bio}</span>
           </div>
-          <button type="submit">Submit</button>
+          <button type="submit" className="btn primary-btn">
+            Submit
+          </button>
           <p>
             Already have an account <Link to="/login">login</Link>
           </p>
