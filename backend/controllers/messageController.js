@@ -164,6 +164,9 @@ const updateMessage = [
             } else if (message.from.toString() === req.user._id.toString()) {
                 const { content } = req.body;
                 await Message.updateOne({ _id: messageId }, { content });
+                const toSocket = getUsers()[message.to.toString()];
+                const fromSocket = getUsers()[req.user._id.toString()];
+                io.to(toSocket).to(fromSocket).emit("update message", { messageId: message._id.toString(), messageData: { content } });
                 res.sendStatus(200);
             } else {
                 res.sendStatus(403);
@@ -202,7 +205,7 @@ const deleteMessage = [
                 await Message.deleteOne({ _id: messageId });
                 const toSocket = getUsers()[message.to.toString()];
                 const fromSocket = getUsers()[req.user._id.toString()];
-                io.to(toSocket).to(fromSocket).emit("delete message", message._id.toString());
+                io.to(toSocket).to(fromSocket).emit("delete message", message);
                 return res.sendStatus(200);
             }
             res.sendStatus(403);
