@@ -6,7 +6,7 @@ import useAuthContext from "../hooks/useAuthContext";
 import MessageDropdown from "./MessageDropdown";
 import EditMessage from "./EditMessage";
 
-const Message = ({ message, updateMessage }) => {
+const Message = ({ message }) => {
   const { auth } = useAuthContext();
   const [edit, setEdit] = useState(false);
 
@@ -43,8 +43,7 @@ const Message = ({ message, updateMessage }) => {
             ) : (
               <EditMessage
                 message={message}
-                onSuccess={(data) => {
-                  updateMessage(data, message._id);
+                onSuccess={() => {
                   setEdit(false);
                 }}
                 onCancel={() => setEdit(false)}
@@ -53,18 +52,12 @@ const Message = ({ message, updateMessage }) => {
           </div>
         )}
         <div>
-          {message?.media?.map((item, idx) => (
+          {message?.files?.map((item, idx) => (
             <File
               key={idx}
               isOwner={auth.user._id === message.from}
               messageId={message._id}
               item={item}
-              onDelete={(file) => {
-                const newFiles = message.media.filter(
-                  (media) => media !== file
-                );
-                updateMessage({ media: newFiles }, message._id);
-              }}
             />
           ))}
         </div>
@@ -75,7 +68,6 @@ const Message = ({ message, updateMessage }) => {
 
 Message.propTypes = {
   message: PropTypes.object,
-  updateMessage: PropTypes.func,
 };
 
 export default Message;

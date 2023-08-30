@@ -104,10 +104,20 @@
 
 .message-media {
     position: relative;
-    border: 3px solid #466543;
+    border: 3px solid;
     border-radius: 5px;
     overflow: hidden;
     margin: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.chat-message__right .message-media {
+    border-color: #466543;
+}
+
+.chat-message__left .message-media {
+    border-color: #eee;
 }
 
 .delete-file-btn-container {

@@ -22,7 +22,7 @@ const EditMessage = ({ message, onSuccess, onCancel }) => {
           message: "Message updated",
           duration: 3000,
         });
-        return onSuccess(data);
+        return onSuccess();
       }
       Toast.show({
         type: Toast.FAILURE,

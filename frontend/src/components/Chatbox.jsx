@@ -31,19 +31,57 @@ const Chatbox = ({
       updateLatestMessages({ latestMessage: { ...message, user } });
     });
 
-    socket.on("delete message", (messageId) => {
-      const previousMessage = data.messages[data.messages.length - 2];
-      replaceLatestMessage({
-        latestMessage: { ...previousMessage, user },
+    socket.on("update message", ({ messageId, messageData }) => {
+      const message = data.messages.filter(
+        (message) => message._id === messageId
+      )[0];
+      replaceLatestMessage(message, {
+        latestMessage: { ...message, ...messageData, user },
+      });
+      setData((data) => {
+        const messages = data.messages.map((message) => {
+          if (message._id === messageId) {
+            return { ...message, ...messageData };
+          }
+          return message;
+        });
+        return { messages };
+      });
+    });
+
+    socket.on("delete message", (deletedMessage) => {
+      // Get previous message
+      const newMessage = data.messages[data.messages.length - 2] || [];
+      replaceLatestMessage(deletedMessage, {
+        latestMessage: { ...newMessage, user },
       });
       setData((data) => ({
-        messages: data.messages.filter((message) => message._id !== messageId),
+        messages: data.messages.filter(
+          (message) => message._id !== deletedMessage._id
+        ),
       }));
+    });
+
+    socket.on("delete file", (socketData) => {
+      setData((data) => {
+        const messages = data.messages.map((message) => {
+          if (message._id === socketData.messageId) {
+            const newFiles = message.files.filter(
+              (file) => file !== socketData.file
+            );
+            message.files = newFiles;
+          }
+          return message;
+        });
+        return { messages };
+      });
     });
 
     return () => {
       socket.off("new message");
+      socket.off("update message");
       socket.off("delete message");
+      socket.off("delete file");
     };
   }, [data, socket, setData, user, updateLatestMessages, replaceLatestMessage]);
 
@@ -54,7 +92,7 @@ const Chatbox = ({
   return (
     <div className="chatbox">
       <ChatHeader user={user} onBack={onBack} />
-      <ChatBody loading={loading} data={data} setData={setData} />
+      <ChatBody loading={loading} data={data} />
       <ChatFooter user={user} />
     </div>
   );

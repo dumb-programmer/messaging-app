@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import useAuthContext from "../hooks/useAuthContext";
-import getMedia from "../api/getMedia";
 import DownloadIcon from "../icons/DownloadIcon";
 import FileDropdown from "./FileDropdown";
+import getFile from "../api/getFile";
 
-const File = ({ isOwner, messageId, item, onDelete }) => {
+const File = ({ isOwner, messageId, item }) => {
   const [file, setFile] = useState(null);
   const { auth } = useAuthContext();
 
   useEffect(() => {
-    getMedia(item, auth.token).then((res) =>
+    getFile(item, auth.token).then((res) =>
       res
         .blob()
         .then((blob) =>
@@ -20,11 +20,8 @@ const File = ({ isOwner, messageId, item, onDelete }) => {
   }, [item, auth?.token]);
 
   const DeleteBtn = useMemo(
-    () =>
-      isOwner ? (
-        <FileDropdown messageId={messageId} file={item} onDelete={onDelete} />
-      ) : null,
-    [isOwner, messageId, item, onDelete]
+    () => (isOwner ? <FileDropdown messageId={messageId} file={item} /> : null),
+    [isOwner, messageId, item]
   );
 
   if (!file) {
@@ -68,7 +65,6 @@ File.propTypes = {
   isOwner: PropTypes.bool,
   messageId: PropTypes.string,
   item: PropTypes.string,
-  onDelete: PropTypes.func,
 };
 
 export default File;

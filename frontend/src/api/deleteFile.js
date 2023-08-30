@@ -1,5 +1,5 @@
-const deleteMedia = (media, data, token) => {
-    return fetch(`http://localhost:3000${media}`,
+const deleteFile = (file, data, token) => {
+    return fetch(`http://localhost:3000${file}`,
         {
             method: "DELETE",
             headers: {
@@ -10,4 +10,4 @@ const deleteMedia = (media, data, token) => {
         });
 };
 
-export default deleteMedia;
+export default deleteFile;

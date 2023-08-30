@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import useAuthContext from "../hooks/useAuthContext";
-import deleteMedia from "../api/deleteMedia";
+import deleteFile from "../api/deleteFile";
 
 const DeleteFileConfirmationForm = ({
   file,
@@ -16,7 +16,7 @@ const DeleteFileConfirmationForm = ({
     e.preventDefault();
     setLoading(true);
     try {
-      await deleteMedia(file, { messageId }, auth.token);
+      await deleteFile(file, { messageId }, auth.token);
       onSuccess();
     } catch (error) {
       console.log(error);

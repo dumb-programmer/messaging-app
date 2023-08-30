@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from "react";
 import MessagesSkeleton from "./MessagesSkeleton";
 import Message from "./Message";
 
-const ChatBody = ({ loading, data, setData }) => {
+const ChatBody = ({ loading, data }) => {
   const chatbodyRef = useRef();
 
   const scrollToBottom = useCallback(
@@ -20,21 +20,7 @@ const ChatBody = ({ loading, data, setData }) => {
       {loading && <MessagesSkeleton />}
       {data &&
         data.messages.map((message) => (
-          <Message
-            key={message._id}
-            message={message}
-            updateMessage={(messageData, messageId) => {
-              setData((data) => {
-                const messages = data.messages.map((message) => {
-                  if (message._id === messageId) {
-                    return { ...message, ...messageData };
-                  }
-                  return message;
-                });
-                return { messages };
-              });
-            }}
-          />
+          <Message key={message._id} message={message} />
         ))}
     </div>
   );
@@ -43,7 +29,6 @@ const ChatBody = ({ loading, data, setData }) => {
 ChatBody.propTypes = {
   data: PropTypes.object,
   loading: PropTypes.bool,
-  setData: PropTypes.func,
 };
 
 export default ChatBody;

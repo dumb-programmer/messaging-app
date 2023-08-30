@@ -1,5 +1,5 @@
-const getMedia = (media, token) => {
-    return fetch(`http://localhost:3000${media}`,
+const getFile = (file, token) => {
+    return fetch(`http://localhost:3000${file}`,
         {
             method: "GET",
             headers: {
@@ -8,4 +8,4 @@ const getMedia = (media, token) => {
         });
 };
 
-export default getMedia;
+export default getFile;

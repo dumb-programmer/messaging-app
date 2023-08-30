@@ -48,11 +48,10 @@ const Chats = () => {
   );
 
   const replaceLatestMessage = useCallback(
-    (newMessage) => {
+    (previousMessage, newMessage) => {
       setData((data) => {
         const message = data.messages.filter(
-          (message) =>
-            message.latestMessage.user._id === newMessage.latestMessage.user._id
+          (message) => message.latestMessage._id === previousMessage._id
         )[0];
         if (message) {
           const index = data.messages.indexOf(message);
