@@ -21,7 +21,7 @@ io.use(async (socket, next) => {
             if (socket.user.status !== "online") {
                 await User.updateOne({ _id: socket.user._id }, { status: "online" });
             }
-            users[socket.user._id.toString()] = { socketId: socket.id };
+            users[socket.user._id.toString()] = socket.id;
         }
     }
     console.log(users);
@@ -53,7 +53,7 @@ io.on("connection", async socket => {
 
     // Broadcast user's online status to their friends
     friends.forEach(({ user: friendId }) => {
-        const friendSocketId = users[friendId.toString()]?.socketId;
+        const friendSocketId = users[friendId.toString()];
         if (friendSocketId) {
             io.to(friendSocketId).emit("user status changed", { userId: socket.user._id.toString(), type: "online" });
         }
@@ -67,7 +67,7 @@ io.on("connection", async socket => {
 
         // Broadcast user's offline status to their friends
         friends.forEach(({ user: friendId }) => {
-            const friendSocketId = users[friendId.toString()]?.socketId;
+            const friendSocketId = users[friendId.toString()];
             if (friendSocketId) {
                 io.to(friendSocketId).emit("user status changed", { userId: socket.user._id.toString(), type: "offline", lastSeen });
             }
@@ -75,7 +75,7 @@ io.on("connection", async socket => {
     });
 
     socket.on("typing", (toUserId) => {
-        const socketId = users[toUserId]?.socketId;
+        const socketId = users[toUserId];
         io.to(socketId).emit("typing");
     });
 });

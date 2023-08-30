@@ -3,5 +3,5 @@ module.exports = {
     Request: require("./request"),
     Friend: require("./friend"),
     Message: require("./message"),
-    MediaMeta: require("./mediaMeta")
+    FileMeta: require("./fileMeta")
 };

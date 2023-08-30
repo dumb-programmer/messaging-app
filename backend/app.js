@@ -8,9 +8,10 @@ const path = require("path");
 const { unlink } = require("fs/promises");
 
 const User = require("./models/user");
-const { MediaMeta, Message } = require("./models");
+const { FileMeta, Message } = require("./models");
 const isAuthorized = require("./middlewares/isAuthorized");
 const asyncHandler = require("./utils/asyncHandler");
+const { io, getUsers } = require("./socket");
 
 const app = express();
 
@@ -43,9 +44,9 @@ app.use(async (req, res, next) => {
     next();
 });
 
-app.get("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
+app.get("/uploads/files/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
     const { fileName } = req.params;
-    const fileMeta = await MediaMeta.findOne({ fileName });
+    const fileMeta = await FileMeta.findOne({ fileName });
     if (!fileMeta) {
         return res.sendStatus(404);
     }
@@ -55,10 +56,10 @@ app.get("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res,
     res.sendStatus(403);
 })]);
 
-app.delete("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
+app.delete("/uploads/files/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
     const { fileName } = req.params;
     const { messageId } = req.body;
-    const fileMeta = await MediaMeta.findOne({ fileName });
+    const fileMeta = await FileMeta.findOne({ fileName });
     if (!fileMeta) {
         return res.sendStatus(404);
     }
@@ -68,8 +69,17 @@ app.delete("/uploads/media/:fileName", [isAuthorized, asyncHandler(async (req, r
     }
     if (fileMeta.owners.includes(req.user._id) && message.from.toString() === req.user._id.toString()) {
         await unlink(`${__dirname}${req.originalUrl}`);
-        await Message.updateOne({ _id: messageId }, { media: message.media.filter(media => media !== req.originalUrl) });
-        await MediaMeta.deleteOne({ fileName });
+        const newMedia = message.files.filter(file => file !== req.originalUrl);
+        const fromSocket = getUsers()[message.from.toString()];
+        const toSocket = getUsers()[message.to.toString()];
+        if (newMedia.length === 0 && message.content.length === 0) {
+            await Message.deleteOne({ _id: message._id });
+            io.to(fromSocket).to(toSocket).emit("delete message", message._id.toString());
+        } else {
+            await Message.updateOne({ _id: messageId }, { files: newMedia });
+        }
+        await FileMeta.deleteOne({ fileName });
+        io.to(fromSocket).to(toSocket).emit("delete file", { messageId: message._id.toString(), file: req.originalUrl });
         return res.sendStatus(200);
     }
     res.sendStatus(403);

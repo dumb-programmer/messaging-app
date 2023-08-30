@@ -4,11 +4,11 @@ const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
 const { body, validationResult } = require("express-validator");
 
-const { Message, Friend, MediaMeta } = require("../models");
-const storeMedia = require("../utils/storeMedia");
+const { Message, Friend, FileMeta } = require("../models");
 const { io, getUsers } = require("../socket");
+const storeFiles = require("../utils/storeFiles");
 
-const setupMulter = multer({ storage: multer.memoryStorage() }).array("media");
+const setupMulter = multer({ storage: multer.memoryStorage() }).array("files");
 
 const areFriends = async (userId, otherUserId) => {
     // Make sure the users are friends
@@ -132,13 +132,13 @@ const createMessage = [
     }),
     asyncHandler(async (req, res) => {
         const { to, content } = req.body;
-        let media = [];
+        let files = [];
         if (req.files) {
-            media = await storeMedia(req.files, "/uploads/media", [req.user._id, to]);
+            files = await storeFiles(req.files, "/uploads/files", [req.user._id, to]);
         }
-        const message = await Message.create({ from: req.user._id, to, content, media });
-        const toSocket = getUsers()[to]?.socketId;
-        const fromSocket = getUsers()[req.user._id.toString()]?.socketId;
+        const message = await Message.create({ from: req.user._id, to, content, files });
+        const toSocket = getUsers()[to];
+        const fromSocket = getUsers()[req.user._id.toString()];
         io.to(toSocket).to(fromSocket).emit("new message", message);
         res.sendStatus(200);
     })
@@ -188,20 +188,20 @@ const deleteMessage = [
             }
             // current user is the sender of the message
             if (message.from.toString() === req.user._id.toString()) {
-                if (message.media.length > 0) {
-                    // TODO: Maybe delete media and message at the same time??
-                    await Promise.all(message.media.map(async media => {
-                        const parts = media.split("/");
+                if (message.files.length > 0) {
+                    // TODO: Maybe delete file and message at the same time??
+                    await Promise.all(message.files.map(async file => {
+                        const parts = file.split("/");
                         const fileName = parts[parts.length - 1];
                         return Promise.all([
-                            fs.unlink(`${__dirname}/..${media}`),
-                            MediaMeta.deleteOne({ fileName })
+                            fs.unlink(`${__dirname}/..${file}`),
+                            FileMeta.deleteOne({ fileName })
                         ]);
                     }));
                 }
                 await Message.deleteOne({ _id: messageId });
-                const toSocket = getUsers()[message.to.toString()]?.socketId;
-                const fromSocket = getUsers()[req.user._id.toString()]?.socketId;
+                const toSocket = getUsers()[message.to.toString()];
+                const fromSocket = getUsers()[req.user._id.toString()];
                 io.to(toSocket).to(fromSocket).emit("delete message", message._id.toString());
                 return res.sendStatus(200);
             }
