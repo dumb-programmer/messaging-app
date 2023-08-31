@@ -36,7 +36,8 @@ main {
 
 .view-container {
     max-height: 100vh;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .message {
@@ -49,10 +50,14 @@ main {
     padding: 10px;
     text-decoration: none;
     color: black;
+    max-height: 100px;
+    overflow: hidden;
 }
 
 .message p {
     color: #999;
+    word-break: break-all;
+    overflow: hidden;
 }
 
 .messages>.active {

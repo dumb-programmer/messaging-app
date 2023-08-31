@@ -106,7 +106,7 @@ const Chats = () => {
 
   return (
     <div className="flex" style={{ height: "100vh" }}>
-      <div style={{ padding: 10, flex: 1 }}>
+      <div style={{ padding: 10, flex: 1, flexShrink: 2 }}>
         <h2>Chats</h2>
         <div className="messages">
           {loading && <ChatSkeleton />}
@@ -115,6 +115,11 @@ const Chats = () => {
             <div
               onClick={() => setSelectedUser(message.latestMessage.user)}
               key={message.latestMessage._id}
+              title={
+                message.latestMessage.content.length > 20
+                  ? message.latestMessage.content
+                  : null
+              }
               className={`message flex ${
                 selectedUser?._id === message.latestMessage.user._id
                   ? "active"
@@ -131,7 +136,14 @@ const Chats = () => {
               >
                 <div>
                   <h3>{`${message.latestMessage.user.firstName} ${message.latestMessage.user.lastName}`}</h3>
-                  <p>{message.latestMessage.content}</p>
+                  <p>
+                    {message.latestMessage.content.length > 10
+                      ? `${message.latestMessage.content
+                          .split("")
+                          .slice(0, 20)
+                          .join("")}...`
+                      : message.latestMessage.content}
+                  </p>
                 </div>
                 <p>
                   {getRelativeDate(new Date(message.latestMessage.createdAt))}

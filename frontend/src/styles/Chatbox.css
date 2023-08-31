@@ -52,6 +52,7 @@
 
 .chat-body {
     overflow-y: scroll;
+    background-color: #fff;
 }
 
 .chat-footer {
@@ -64,11 +65,13 @@
 }
 
 .message-content {
+    max-width: 500px;
     position: relative;
     display: flex;
     align-items: center;
     padding: 10px;
     border-radius: 5px;
+    word-break: break-all;
 }
 
 .message-meta {

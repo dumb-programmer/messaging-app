@@ -7,12 +7,12 @@ const TypingIndicator = ({ name }) => {
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    socket.on("typing", () => {
+    socket?.on("typing", () => {
       setIsTyping(true);
     });
 
     return () => {
-      socket.off("typing");
+      socket?.off("typing");
     };
   }, [socket]);
 

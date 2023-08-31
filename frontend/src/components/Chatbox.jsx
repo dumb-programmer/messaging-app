@@ -23,7 +23,7 @@ const Chatbox = ({
   );
 
   useEffect(() => {
-    socket.on("new message", (message) => {
+    socket?.on("new message", (message) => {
       setData((data) => ({
         ...data,
         messages: [...data.messages, message],
@@ -31,7 +31,7 @@ const Chatbox = ({
       updateLatestMessages({ latestMessage: { ...message, user } });
     });
 
-    socket.on("update message", ({ messageId, messageData }) => {
+    socket?.on("update message", ({ messageId, messageData }) => {
       const message = data.messages.filter(
         (message) => message._id === messageId
       )[0];
@@ -49,7 +49,7 @@ const Chatbox = ({
       });
     });
 
-    socket.on("delete message", (deletedMessage) => {
+    socket?.on("delete message", (deletedMessage) => {
       // Get previous message
       const newMessage = data.messages[data.messages.length - 2] || [];
       replaceLatestMessage(deletedMessage, {
@@ -62,7 +62,7 @@ const Chatbox = ({
       }));
     });
 
-    socket.on("delete file", (socketData) => {
+    socket?.on("delete file", (socketData) => {
       setData((data) => {
         const messages = data.messages.map((message) => {
           if (message._id === socketData.messageId) {
@@ -78,10 +78,10 @@ const Chatbox = ({
     });
 
     return () => {
-      socket.off("new message");
-      socket.off("update message");
-      socket.off("delete message");
-      socket.off("delete file");
+      socket?.off("new message");
+      socket?.off("update message");
+      socket?.off("delete message");
+      socket?.off("delete file");
     };
   }, [data, socket, setData, user, updateLatestMessages, replaceLatestMessage]);
 
