@@ -18,7 +18,19 @@ function App() {
   );
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider
+      value={{
+        auth,
+        setAuth,
+        updateAuth: (cb) => {
+          setAuth((auth) => {
+            const newAuth = cb(auth);
+            localStorage.setItem("auth", JSON.stringify(newAuth));
+            return newAuth;
+          });
+        },
+      }}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />}>
