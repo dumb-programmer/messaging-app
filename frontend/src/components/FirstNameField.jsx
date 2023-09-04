@@ -56,12 +56,18 @@ const FirstNameField = () => {
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
-          <div style={{ position: "absolute", top: 4, right: 0 }}>
-            <button style={{ marginRight: 10 }} onClick={() => setEdit(false)}>
+          <div
+            className="flex gap-md"
+            style={{ position: "absolute", top: 2, right: 10 }}
+          >
+            <button
+              className="btn secondary-btn"
+              onClick={() => setEdit(false)}
+            >
               Cancel
             </button>
             <button
-              style={{ marginRight: 10 }}
+              className="btn primary-btn"
               onClick={!loading ? handleSubmit : (e) => e.preventDefault()}
             >
               Save

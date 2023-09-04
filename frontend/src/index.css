@@ -1,8 +1,15 @@
 @import url("https://fonts.googleapis.com/css?family=Lato");
 
+:root {
+    --primary-clr: #466543;
+    --danger-clr: #ff3f3f;
+    --gap-md: 0.8rem;
+    --gap-lg: 1rem;
+}
+
 * {
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
     box-sizing: border-box;
 }
 

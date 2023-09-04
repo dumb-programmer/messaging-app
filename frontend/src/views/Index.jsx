@@ -26,37 +26,38 @@ const Index = () => {
           <nav>
             <ul>
               <li className="tab">
-                <ChatIcon size={30} color="black" strokeWidth={1.5} />
-                <NavLink to="/">Chats</NavLink>
+                <NavLink to="/">
+                  <ChatIcon size={23} color="black" strokeWidth={1.5} />
+                  Chats
+                </NavLink>
               </li>
               <li className="tab">
-                <PeoplesIcon size={30} color="black" strokeWidth={1.5} />
-                <NavLink to="/people">People</NavLink>
+                <NavLink to="/people">
+                  <PeoplesIcon size={23} color="black" strokeWidth={1.5} />
+                  People
+                </NavLink>
               </li>
               <li className="tab">
-                <PeoplesIcon size={30} color="black" strokeWidth={1.5} />
-                <NavLink to="/requests">Requests</NavLink>
+                <NavLink to="/requests">
+                  <PeoplesIcon size={23} color="black" strokeWidth={1.5} />
+                  Requests
+                </NavLink>
               </li>
               <li className="tab">
-                <SettingsIcon size={30} color="black" strokeWidth={1.5} />
-                <NavLink to="/settings">Settings</NavLink>
+                <NavLink to="/settings">
+                  <SettingsIcon size={23} color="black" strokeWidth={1.5} />
+                  Settings
+                </NavLink>
               </li>
               <li className="tab">
-                <LogoutIcon size={30} color="black" strokeWidth={1.5} />
-                Logout
+                <NavLink to="/logout">
+                  <LogoutIcon size={23} color="black" strokeWidth={1.5} />
+                  Logout
+                </NavLink>
               </li>
             </ul>
           </nav>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              position: "absolute",
-              bottom: 0,
-              padding: 10,
-              gap: "0.8rem",
-            }}
-          >
+          <div className="account-info">
             <img
               src={`http://localhost:3000/${avatar}`}
               className="avatar"

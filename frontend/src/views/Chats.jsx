@@ -3,10 +3,11 @@ import useAuthContext from "../hooks/useAuthContext";
 import useApi from "../hooks/useApi";
 import getRelativeDate from "../utils/getRelativeDate";
 import { useLocation } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useSocketContext from "../hooks/useSocketContext";
 import ChatBox from "../components/Chatbox";
 import ChatSkeleton from "../components/ChatSkeleton";
+import useWidthObserver from "../hooks/useWidthObserver";
 
 const sortMessagesByDate = (messages) =>
   messages.sort(
@@ -25,6 +26,8 @@ const Chats = () => {
   const { state } = useLocation();
   const [selectedUser, setSelectedUser] = useState(state?.user || null);
   const socket = useSocketContext();
+  const containerRef = useRef();
+  const { width } = useWidthObserver(containerRef);
 
   const updateLatestMessages = useCallback(
     (newMessage) => {
@@ -105,8 +108,13 @@ const Chats = () => {
   }, [socket, updateUser, selectedUser, data]);
 
   return (
-    <div className="flex" style={{ height: "100vh" }}>
-      <div style={{ padding: 10, flex: 1, flexShrink: 2 }}>
+    <div className="flex" ref={containerRef} style={{ maxHeight: "100%" }}>
+      <div
+        className="chat-messages"
+        style={{
+          padding: selectedUser && width < 995 ? 0 : 10,
+        }}
+      >
         <h2>Chats</h2>
         <div className="messages">
           {loading && <ChatSkeleton />}

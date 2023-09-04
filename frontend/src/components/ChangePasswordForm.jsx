@@ -61,7 +61,10 @@ const ChangePasswordForm = ({ onCancel, onSuccess }) => {
   };
 
   return (
-    <form style={{ minWidth: 500, padding: 10 }} onSubmit={handleSubmit}>
+    <form
+      style={{ minWidth: "min(500px, 85vw)", padding: 10 }}
+      onSubmit={handleSubmit}
+    >
       <h3>Change Password</h3>
       <div className="form-control">
         <label htmlFor="password">

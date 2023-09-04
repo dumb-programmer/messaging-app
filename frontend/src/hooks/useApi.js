@@ -7,6 +7,12 @@ const useApi = (cb, dependencyArray = []) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        if (data || error) {
+            setLoading(false);
+        }
+    }, [data, error]);
+
+    useEffect(() => {
         let stale = false;
         cb().then(response => {
             if (response.ok) {
@@ -15,7 +21,6 @@ const useApi = (cb, dependencyArray = []) => {
                         setData(jsonData);
                     }
                 });
-                setLoading(false);
             }
         }).catch(error => setError(error));
 

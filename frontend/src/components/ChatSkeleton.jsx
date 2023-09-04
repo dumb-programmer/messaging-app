@@ -2,7 +2,7 @@ import Skeleton from "react-loading-skeleton";
 
 const ChatSkeleton = () => {
   return (
-    <div style={{ width: "100%" }}>
+    <div>
       {Array.from({ length: 10 }).map((_, idx) => (
         <div
           className="flex gap-md align-center"

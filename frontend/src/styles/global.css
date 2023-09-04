@@ -31,7 +31,7 @@
 }
 
 .gap-md {
-    gap: 0.8rem;
+    gap: var(--gap-md);
 }
 
 .break-work {
@@ -57,7 +57,7 @@
 }
 
 .primary-btn {
-    background-color: #466543;
+    background-color: var(--primary-clr);
     color: #fff;
 }
 
@@ -66,6 +66,6 @@
 }
 
 .danger-btn {
-    background-color: red !important;
+    background-color: var(--danger-clr) !important;
     color: white !important;
 }
