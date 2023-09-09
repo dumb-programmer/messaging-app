@@ -110,8 +110,8 @@ const getMessages = [isAuthorized, getLatestMessages, asyncHandler(async (req, r
                 { from: req.user._id, to: userId },
                 { from: userId, to: req.user._id }
             ]
-        }).sort({ createdAt: 1 });
-        res.json({ messages, page });
+        }).sort({ createdAt: -1 }).limit(PAGE_SIZE).skip((page - 1) * PAGE_SIZE);
+        res.json({ messages: messages.reverse(), page, hasMore: messages.length > 0 });
     } catch (error) {
         if (error.name === "CastError") {
             return res.status(400).json({ message: "Invalid userId" });
