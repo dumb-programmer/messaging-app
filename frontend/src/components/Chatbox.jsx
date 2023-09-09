@@ -1,12 +1,12 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import useApi from "../hooks/useApi";
 import getMessages from "../api/getMessages";
 import useAuthContext from "../hooks/useAuthContext";
 import useSocketContext from "../hooks/useSocketContext";
 import ChatHeader from "./ChatHeader";
 import ChatFooter from "./ChatFooter";
 import ChatBody from "./ChatBody";
+import useInfiniteApi from "../hooks/useInfiniteApi";
 import "../styles/Chatbox.css";
 
 const Chatbox = ({
@@ -17,9 +17,15 @@ const Chatbox = ({
 }) => {
   const { auth } = useAuthContext();
   const socket = useSocketContext();
-  const { data, setData, loading, error } = useApi(
-    () => getMessages(user._id, auth.token),
-    [user._id]
+  const chatbodyRef = useRef();
+  const { data, setData, loading, loadingMore, error } = useInfiniteApi(
+    (page) => getMessages(user._id, auth.token, page),
+    () => ((chatbodyRef.current.scrollTop = 45), [user._id])
+  );
+
+  const scrollToBottom = useCallback(
+    () => (chatbodyRef.current.scrollTop = chatbodyRef.current.scrollHeight),
+    [chatbodyRef]
   );
 
   useEffect(() => {
@@ -92,7 +98,13 @@ const Chatbox = ({
   return (
     <div className="chatbox">
       <ChatHeader user={user} onBack={onBack} />
-      <ChatBody loading={loading} data={data} />
+      <ChatBody
+        loading={loading}
+        loadingMore={loadingMore}
+        data={data}
+        chatbodyRef={chatbodyRef}
+        scrollToBottom={scrollToBottom}
+      />
       <ChatFooter user={user} />
     </div>
   );

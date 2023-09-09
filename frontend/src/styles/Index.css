@@ -66,6 +66,7 @@ main {
     flex-shrink: 2;
     flex-basis: 0;
     min-width: 0px;
+    padding: 10px;
 }
 
 .message {
@@ -174,5 +175,9 @@ main {
     .active .feather-settings::after {
         top: 8px;
         left: 8px;
+    }
+
+    .chat__active {
+        padding: 0px !important;
     }
 }
