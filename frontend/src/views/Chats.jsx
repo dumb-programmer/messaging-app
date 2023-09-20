@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import getLatestChats from "../api/getLatestChats";
 import useAuthContext from "../hooks/useAuthContext";
 import useApi from "../hooks/useApi";
-import getRelativeDate from "../utils/getRelativeDate";
-import { useLocation } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
 import useSocketContext from "../hooks/useSocketContext";
 import ChatBox from "../components/Chatbox";
 import ChatSkeleton from "../components/ChatSkeleton";
+import ChatMessageList from "../components/ChatMessageList";
 
 const sortMessagesByDate = (messages) =>
   messages.sort(
@@ -19,8 +19,8 @@ const getDate = () => new Date().toISOString();
 
 const Chats = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(() =>
-    getLatestChats(auth.token)
+  const { data, setData, loading, error } = useApi(
+    useCallback(() => getLatestChats(auth.token), [auth.token])
   );
   const { state } = useLocation();
   const [selectedUser, setSelectedUser] = useState(state?.user || null);
@@ -98,11 +98,24 @@ const Chats = () => {
         }
       }
     });
+  }, [updateUser, selectedUser, data, socket]);
+
+  useEffect(() => {
+    console.log("Connecting");
+    socket?.on("new message", (newMessage) => {
+      const user = data?.messages?.filter(
+        (message) =>
+          message.latestMessage.user._id === newMessage.to ||
+          message.latestMessage.user._id === newMessage.from
+      )[0]?.latestMessage?.user;
+      updateLatestMessages({ latestMessage: { ...newMessage, user } });
+    });
 
     return () => {
-      socket?.off("user status changed");
+      socket?.off("new message");
+      console.log("Disconnecting");
     };
-  }, [socket, updateUser, selectedUser, data]);
+  }, [socket, data, updateLatestMessages]);
 
   return (
     <div className="flex" style={{ maxHeight: "100%" }}>
@@ -111,46 +124,11 @@ const Chats = () => {
         <div className="messages">
           {loading && <ChatSkeleton />}
           {error && <div>Error</div>}
-          {data?.messages?.map((message) => (
-            <div
-              onClick={() => setSelectedUser(message.latestMessage.user)}
-              key={message.latestMessage._id}
-              title={
-                message.latestMessage.content.length > 20
-                  ? message.latestMessage.content
-                  : null
-              }
-              className={`message flex ${
-                selectedUser?._id === message.latestMessage.user._id
-                  ? "active"
-                  : ""
-              }`}
-            >
-              <img
-                src={`http://localhost:3000/${message.latestMessage.user.avatar}`}
-                className="avatar avatar-sm"
-              />
-              <div
-                className="body flex justify-between align-center"
-                style={{ flex: 2 }}
-              >
-                <div>
-                  <h3>{`${message.latestMessage.user.firstName} ${message.latestMessage.user.lastName}`}</h3>
-                  <p>
-                    {message.latestMessage.content.length > 10
-                      ? `${message.latestMessage.content
-                          .split("")
-                          .slice(0, 20)
-                          .join("")}...`
-                      : message.latestMessage.content}
-                  </p>
-                </div>
-                <p>
-                  {getRelativeDate(new Date(message.latestMessage.createdAt))}
-                </p>
-              </div>
-            </div>
-          ))}
+          <ChatMessageList
+            messages={data?.messages}
+            selectedUser={selectedUser}
+            setSelectedUser={setSelectedUser}
+          />
         </div>
       </div>
       {selectedUser && (

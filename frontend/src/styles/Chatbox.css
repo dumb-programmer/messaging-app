@@ -7,6 +7,7 @@
     position: relative;
     transform-origin: right;
     animation: slide-left 200ms ease-in;
+    z-index: 2;
 }
 
 .chat-header {
