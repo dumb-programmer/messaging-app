@@ -4,7 +4,6 @@
     grid-template-rows: auto 1fr auto;
     border-left: 2px solid #eee;
     overflow: hidden;
-    height: 100vh;
     position: relative;
     transform-origin: right;
     animation: slide-left 200ms ease-in;
@@ -304,7 +303,6 @@
 
 @media (max-width: 600px) {
     .chatbox {
-        height: 89vh;
         width: 100%;
     }
 }
