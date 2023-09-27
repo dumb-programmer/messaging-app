@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
 import useApi from "../hooks/useApi";
@@ -11,8 +11,8 @@ const ContactList = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(() =>
-    getFriends(auth.token)
+  const { data, setData, loading, error } = useApi(
+    useCallback(() => getFriends(auth.token), [auth.token])
   );
   const Toast = useToastContext();
 
@@ -35,7 +35,7 @@ const ContactList = () => {
               style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}
             >
               <img
-                className="avatar"
+                className="avatar avatar-lg"
                 src={`http://localhost:3000/${friend.user.avatar}`}
               />
               <div>

@@ -22,13 +22,14 @@ const EditMessage = ({ message, onSuccess, onCancel }) => {
           message: "Message updated",
           duration: 3000,
         });
-        return onSuccess();
+        onSuccess();
+      } else {
+        Toast.show({
+          type: Toast.FAILURE,
+          message: (await response.json()).message,
+          duration: 3000,
+        });
       }
-      Toast.show({
-        type: Toast.FAILURE,
-        message: (await response.json()).message,
-        duration: 3000,
-      });
     } catch (error) {
       console.log(error);
     }

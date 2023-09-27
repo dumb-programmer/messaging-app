@@ -1,25 +1,29 @@
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
+import { io } from "socket.io-client";
 import SocketContext from "../context/SocketContext";
 import useAuthContext from "../hooks/useAuthContext";
 
 const SocketProvider = ({ children }) => {
   const { auth } = useAuthContext();
-  const [socket, setSocket] = useState(null);
+
+  const socket = useMemo(
+    () =>
+      io("http://localhost:3001/", {
+        extraHeaders: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+        autoConnect: false,
+      }),
+    [auth.token]
+  );
 
   useEffect(() => {
-    const newSocket = new io("http://localhost:3001/", {
-      extraHeaders: {
-        Authorization: `Bearer ${auth.token}`,
-      },
-    });
-    setSocket(newSocket);
-
+    socket.connect();
     return () => {
-      newSocket.disconnect();
+      socket.disconnect();
     };
-  }, [auth.token]);
+  }, [socket]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

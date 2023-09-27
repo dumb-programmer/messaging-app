@@ -45,7 +45,7 @@ const ChatFooter = ({ user }) => {
         />
       )}
       <div className="chat-footer">
-        <TypingIndicator name={user.firstName} />
+        <TypingIndicator name={user.firstName} selectedUserId={user._id} />
         <form onSubmit={onCreateMessage}>
           <div className="form-control">
             <input
@@ -53,7 +53,7 @@ const ChatFooter = ({ user }) => {
               placeholder="Message"
               value={message}
               onChange={(e) => {
-                socket.emit("typing", user._id);
+                socket?.emit("typing", user._id);
                 setMessage(e.target.value);
               }}
             />

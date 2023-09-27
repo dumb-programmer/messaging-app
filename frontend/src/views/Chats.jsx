@@ -81,7 +81,7 @@ const Chats = () => {
   );
 
   useEffect(() => {
-    socket?.on("user status changed", (socketData) => {
+    const onUserStatusChanged = (socketData) => {
       // Get the user whose status changed
       const user = data?.messages?.filter(
         (message) => message.latestMessage.user._id === socketData.userId
@@ -97,23 +97,27 @@ const Chats = () => {
           setSelectedUser(newUser);
         }
       }
-    });
+    };
+    socket?.on("user status changed", onUserStatusChanged);
+
+    return () => {
+      socket?.off("user status changed", onUserStatusChanged);
+    };
   }, [updateUser, selectedUser, data, socket]);
 
   useEffect(() => {
-    console.log("Connecting");
-    socket?.on("new message", (newMessage) => {
+    const onNewMessage = (newMessage) => {
       const user = data?.messages?.filter(
         (message) =>
           message.latestMessage.user._id === newMessage.to ||
           message.latestMessage.user._id === newMessage.from
       )[0]?.latestMessage?.user;
       updateLatestMessages({ latestMessage: { ...newMessage, user } });
-    });
+    };
+    socket?.on("new message", onNewMessage);
 
     return () => {
-      socket?.off("new message");
-      console.log("Disconnecting");
+      socket?.off("new message", onNewMessage);
     };
   }, [socket, data, updateLatestMessages]);
 

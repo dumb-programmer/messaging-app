@@ -7,7 +7,7 @@ const ChatMessageList = ({ messages, selectedUser, setSelectedUser }) => {
   }
   return messages.map((message) => (
     <ChatMessage
-      key={message._id}
+      key={message.latestMessage._id}
       isActive={selectedUser?._id === message.latestMessage.user._id}
       onClick={() => setSelectedUser(message.latestMessage.user)}
       message={message}

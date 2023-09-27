@@ -30,7 +30,7 @@ const ChatBody = ({
     <div className="chat-body" ref={chatbodyRef}>
       {loading && <MessagesSkeleton />}
       {loadingMore && (
-        <div className="flex centered" style={{ paddingTop: 10 }}>
+        <div className="flex justify-center" style={{ paddingTop: 10 }}>
           <div
             className="flex centered"
             style={{

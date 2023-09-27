@@ -9,41 +9,49 @@ import ChatBody from "./ChatBody";
 import useInfiniteApi from "../hooks/useInfiniteApi";
 import "../styles/Chatbox.css";
 
-const Chatbox = ({
-  user,
-  updateLatestMessages,
-  replaceLatestMessage,
-  onBack,
-}) => {
+const Chatbox = ({ user, replaceLatestMessage, onBack }) => {
   const { auth } = useAuthContext();
   const socket = useSocketContext();
   const chatbodyRef = useRef();
   const { data, setData, loading, loadingMore, error } = useInfiniteApi(
-    (page) => getMessages(user._id, auth.token, page),
-    () => ((chatbodyRef.current.scrollTop = 45), [user._id])
+    useCallback(
+      (page) => getMessages(user._id, auth.token, page),
+      [user._id, auth.token]
+    ),
+    () => chatbodyRef.current.scrollBy({ top: 200, behavior: "smooth" })
   );
 
-  const scrollToBottom = useCallback(
-    () => (chatbodyRef.current.scrollTop = chatbodyRef.current.scrollHeight),
-    [chatbodyRef]
-  );
+  const scrollToBottom = useCallback(() => {
+    chatbodyRef.current.scrollBy({
+      top: chatbodyRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [chatbodyRef]);
 
   useEffect(() => {
-    socket?.on("new message", (message) => {
-      setData((data) => ({
-        ...data,
-        messages: [...data.messages, message],
-      }));
-      updateLatestMessages({ latestMessage: { ...message, user } });
-    });
+    const onNewMessage = (message) => {
+      if (message.from === user._id || message.from === auth.user._id) {
+        setData((data) => ({
+          ...data,
+          messages: [...data.messages, message],
+        }));
+        chatbodyRef.current.scrollBy({
+          top: chatbodyRef.current.scrollHeight + 50,
+          behavior: "smooth",
+        });
+      }
+    };
 
-    socket?.on("update message", ({ messageId, messageData }) => {
+    const onUpdateMessage = ({ messageId, messageData }) => {
       const message = data.messages.filter(
         (message) => message._id === messageId
       )[0];
-      replaceLatestMessage(message, {
-        latestMessage: { ...message, ...messageData, user },
-      });
+      replaceLatestMessage(
+        { messageId, messageData },
+        {
+          latestMessage: { ...message, ...messageData, user },
+        }
+      );
       setData((data) => {
         const messages = data.messages.map((message) => {
           if (message._id === messageId) {
@@ -53,9 +61,9 @@ const Chatbox = ({
         });
         return { messages };
       });
-    });
+    };
 
-    socket?.on("delete message", (deletedMessage) => {
+    const onDeleteMessage = (deletedMessage) => {
       // Get previous message
       const newMessage = data.messages[data.messages.length - 2] || [];
       replaceLatestMessage(deletedMessage, {
@@ -66,9 +74,9 @@ const Chatbox = ({
           (message) => message._id !== deletedMessage._id
         ),
       }));
-    });
+    };
 
-    socket?.on("delete file", (socketData) => {
+    const onDeleteFile = (socketData) => {
       setData((data) => {
         const messages = data.messages.map((message) => {
           if (message._id === socketData.messageId) {
@@ -81,15 +89,30 @@ const Chatbox = ({
         });
         return { messages };
       });
-    });
+    };
+
+    socket?.on("new message", onNewMessage);
+
+    socket?.on("update message", onUpdateMessage);
+    socket.on("delete message", onDeleteMessage);
+
+    socket?.on("delete file", onDeleteFile);
 
     return () => {
-      socket?.off("new message");
-      socket?.off("update message");
-      socket?.off("delete message");
-      socket?.off("delete file");
+      socket?.off("new message", onNewMessage);
+      socket?.off("update message", onUpdateMessage);
+      socket?.off("delete message", onDeleteMessage);
+      socket?.off("delete file", onDeleteFile);
     };
-  }, [data, socket, setData, user, updateLatestMessages, replaceLatestMessage]);
+  }, [
+    data,
+    socket,
+    auth.user._id,
+    user,
+    scrollToBottom,
+    setData,
+    replaceLatestMessage,
+  ]);
 
   if (error) {
     return <div>Error</div>;
@@ -112,7 +135,6 @@ const Chatbox = ({
 
 Chatbox.propTypes = {
   user: PropTypes.object,
-  updateLatestMessages: PropTypes.func,
   replaceLatestMessage: PropTypes.func,
   onBack: PropTypes.func,
 };

@@ -2,19 +2,21 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import useSocketContext from "../hooks/useSocketContext";
 
-const TypingIndicator = ({ name }) => {
+const TypingIndicator = ({ name, selectedUserId }) => {
   const socket = useSocketContext();
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    socket?.on("typing", () => {
-      setIsTyping(true);
-    });
-
-    return () => {
-      socket?.off("typing");
+    const onTyping = (userId) => {
+      if (userId === selectedUserId) {
+        setIsTyping(true);
+      }
     };
-  }, [socket]);
+    socket?.on("typing", onTyping);
+    return () => {
+      socket?.off("typing", onTyping);
+    };
+  }, [socket, selectedUserId]);
 
   useEffect(() => {
     let timeout = null;
@@ -44,6 +46,7 @@ const TypingIndicator = ({ name }) => {
 
 TypingIndicator.propTypes = {
   name: PropTypes.string,
+  selectedUserId: PropTypes.string,
 };
 
 export default TypingIndicator;

@@ -23,7 +23,7 @@ const ChatHeader = ({ user, onBack }) => {
         <div className={`${status === "online" ? "online-indicator" : ""}`}>
           <img
             src={`http://localhost:3000/${avatar}`}
-            className="avatar avatar-sm"
+            className="avatar avatar-lg"
             alt="user avatar"
           />
         </div>
