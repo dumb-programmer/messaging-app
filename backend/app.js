@@ -5,13 +5,9 @@ const RateLimit = require("express-rate-limit");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const path = require("path");
-const { unlink } = require("fs/promises");
 
 const User = require("./models/user");
-const { FileMeta, Message } = require("./models");
 const isAuthorized = require("./middlewares/isAuthorized");
-const asyncHandler = require("./utils/asyncHandler");
-const { io, getUsers } = require("./socket");
 
 const app = express();
 
@@ -51,58 +47,19 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.get("/uploads/files/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
-    const { fileName } = req.params;
-    const fileMeta = await FileMeta.findOne({ fileName });
-    if (!fileMeta) {
-        return res.sendStatus(404);
-    }
-    if (fileMeta.owners.includes(req.user._id)) {
-        return res.sendFile(`${__dirname}${req.originalUrl}`);
-    }
-    res.sendStatus(403);
-})]);
-
-app.delete("/uploads/files/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
-    const { fileName } = req.params;
-    const { messageId } = req.body;
-    const fileMeta = await FileMeta.findOne({ fileName });
-    if (!fileMeta) {
-        return res.sendStatus(404);
-    }
-    const message = await Message.findById(messageId);
-    if (!message) {
-        return res.sendStatus(404);
-    }
-    if (fileMeta.owners.includes(req.user._id) && message.from.toString() === req.user._id.toString()) {
-        await unlink(`${__dirname}${req.originalUrl}`);
-        const newMedia = message.files.filter(file => file !== req.originalUrl);
-        const fromSocket = getUsers()[message.from.toString()];
-        const toSocket = getUsers()[message.to.toString()];
-        if (newMedia.length === 0 && message.content.length === 0) {
-            await Message.deleteOne({ _id: message._id });
-            io.to(fromSocket).to(toSocket).emit("delete message", message._id.toString());
-        } else {
-            await Message.updateOne({ _id: messageId }, { files: newMedia });
-        }
-        await FileMeta.deleteOne({ fileName });
-        io.to(fromSocket).to(toSocket).emit("delete file", { messageId: message._id.toString(), file: req.originalUrl });
-        return res.sendStatus(200);
-    }
-    res.sendStatus(403);
-})]);
-
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
 const requestRouter = require("./routes/requestRouter");
 const friendRouter = require("./routes/friendRouter");
 const messageRouter = require("./routes/messageRouter");
+const fileRouter = require("./routes/fileRouter");
 
 app.use("/api", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/requests", isAuthorized, requestRouter);
 app.use("/api/friends", isAuthorized, friendRouter);
 app.use("/api/messages", isAuthorized, messageRouter);
+app.use("/uploads/files", isAuthorized, fileRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ message: "Invalid route" });
