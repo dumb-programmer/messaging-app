@@ -18,30 +18,37 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(compression());
-app.use(helmet({
+app.use(
+  helmet({
     crossOriginResourcePolicy: {
-        policy: "cross-origin"
-    }
-}));
+      policy: "cross-origin",
+    },
+  })
+);
 
-app.use("/uploads/avatars", express.static(path.join(__dirname, "uploads/avatars/")));
+app.use(
+  "/uploads/avatars",
+  express.static(path.join(__dirname, "uploads/avatars/"))
+);
 if (process.env.NODE_ENV === "production") {
-    app.use(RateLimit({
-        windowMs: 1 * 60 * 1000, // 1 minute
-        max: 20
-    }));
+  app.use(
+    RateLimit({
+      windowMs: 1 * 60 * 1000, // 1 minute
+      max: 20,
+    })
+  );
 }
 
 app.use(async (req, res, next) => {
-    const { authorization } = req.headers;
-    if (authorization) {
-        const token = authorization.split(" ")[1];
-        const isTokenValid = jwt.verify(token, process.env.SECRET);
-        if (isTokenValid) {
-            req.user = await User.findById(jwt.decode(token)._id);
-        }
+  const { authorization } = req.headers;
+  if (authorization) {
+    const token = authorization.split(" ")[1];
+    const isTokenValid = jwt.verify(token, process.env.SECRET);
+    if (isTokenValid) {
+      req.user = await User.findById(jwt.decode(token)._id);
     }
-    next();
+  }
+  next();
 });
 
 app.get("/uploads/files/:fileName", [isAuthorized, asyncHandler(async (req, res, next) => {
@@ -93,22 +100,29 @@ const messageRouter = require("./routes/messageRouter");
 
 app.use("/api", authRouter);
 app.use("/api/users", userRouter);
-app.use("/api/requests", requestRouter);
-app.use("/api/friends", friendRouter);
-app.use("/api/messages", messageRouter);
+app.use("/api/requests", isAuthorized, requestRouter);
+app.use("/api/friends", isAuthorized, friendRouter);
+app.use("/api/messages", isAuthorized, messageRouter);
 
 app.use((req, res, next) => {
-    res.status(404).json({ message: "Invalid route" });
+  res.status(404).json({ message: "Invalid route" });
 });
 
 app.use((err, req, res, next) => {
-    if (err.toString().split(": ")[1].toLowerCase() === "unsupported file") {
-        return res.status(400).json({ message: [{ path: "avatar", msg: "Unsupported file type, only images are supported" }] });
-    }
-    if (process.env.NODE_ENV === "development") {
-        console.error(err);
-    }
-    res.status(500).json({ message: "Something went wrong" });
+  if (err.toString().split(": ")[1].toLowerCase() === "unsupported file") {
+    return res.status(400).json({
+      message: [
+        {
+          path: "avatar",
+          msg: "Unsupported file type, only images are supported",
+        },
+      ],
+    });
+  }
+  if (process.env.NODE_ENV === "development") {
+    console.error(err);
+  }
+  res.status(500).json({ message: "Something went wrong" });
 });
 
 module.exports = app;
