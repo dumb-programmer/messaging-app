@@ -3,33 +3,30 @@ import PropTypes from "prop-types";
 import ChevronLeft from "../icons/ChevronLeft";
 import ChevronRight from "../icons/ChevronRight";
 
-const Carousal = ({ files, onChange }) => {
+const Carousal = ({ items }) => {
   const [selected, setSelected] = useState(0);
 
   useEffect(() => {
-    onChange(files[selected]?.id);
-  }, [files, selected, onChange]);
-
-  useEffect(() => {
     // When selected is out of range
-    if (selected === files.length) {
-      setSelected(files.length - 1);
+    if (selected === items.length) {
+      setSelected(items.length - 1);
     }
-  }, [files, selected]);
+  }, [items, selected]);
 
   const onNext = () => {
-    if (selected < files.length - 1) {
-      const newSelected = selected + 1;
-      setSelected(newSelected);
+    if (selected < items.length - 1) {
+      setSelected((selected) => selected + 1);
     }
   };
 
   const onPrevious = () => {
     if (selected > 0) {
-      const newSelected = selected - 1;
-      setSelected(newSelected);
+      setSelected((selected) => selected - 1);
     }
   };
+
+  const hasNext = selected < items.length - 1;
+  const hasPrevious = selected > 0;
 
   return (
     <div
@@ -44,28 +41,27 @@ const Carousal = ({ files, onChange }) => {
         flex: 2,
       }}
     >
-      <button
-        className="btn secondary-btn centered"
-        onClick={onPrevious}
-        disabled={selected === 0}
-      >
-        <ChevronLeft size={20} color="white" strokeWidth={2} />
-      </button>
-      {files[selected]?.preview}
-      <button
-        className="btn secondary-btn centered"
-        onClick={onNext}
-        disabled={selected === files.length - 1}
-      >
-        <ChevronRight size={20} color="white" strokeWidth={2} />
-      </button>
+      <div>
+        {hasPrevious && (
+          <button className="btn centered" onClick={onPrevious}>
+            <ChevronLeft size={20} color="white" strokeWidth={2} />
+          </button>
+        )}
+      </div>
+      {items[selected]}
+      <div>
+        {hasNext && (
+          <button className="btn centered" onClick={onNext}>
+            <ChevronRight size={20} color="white" strokeWidth={2} />
+          </button>
+        )}
+      </div>
     </div>
   );
 };
 
 Carousal.propTypes = {
-  files: PropTypes.array,
-  onChange: PropTypes.func,
+  items: PropTypes.array,
 };
 
 export default Carousal;

@@ -7,40 +7,33 @@ import useSocketContext from "../hooks/useSocketContext";
 import sendMessage from "../api/sendMessage";
 import useAuthContext from "../hooks/useAuthContext";
 import FilesPreview from "./FilesPreview";
+import TrashIcon from "../icons/TrashIcon";
 
 const ChatFooter = ({ user }) => {
-  const [message, setMessage] = useState("");
-  const [filesPreview, setFilesPreview] = useState([]);
-  const [file, setFile] = useState([]);
   const socket = useSocketContext();
   const { auth } = useAuthContext();
+  
+  const [message, setMessage] = useState("");
+  const [files, setFiles] = useState([]);
 
   const onCreateMessage = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("to", user._id);
     formData.append("content", message);
-    file.forEach((file) => formData.append("files", file.file));
+    files.forEach((file) => formData.append("files", file.payload));
     await sendMessage(formData, auth.token);
-    setFile([]);
-    setFilesPreview([]);
+    setFiles([]);
     setMessage("");
   };
 
   return (
     <>
-      {filesPreview.length > 0 && (
+      {files.length > 0 && (
         <FilesPreview
-          files={filesPreview}
-          removeFile={(fileId) => {
-            setFilesPreview((files) =>
-              files.filter((file) => file.id !== fileId)
-            );
-            setFile((files) => files.filter((file) => file.id !== fileId));
-          }}
+          files={files.map((file) => file.preview)}
           resetFiles={() => {
-            setFilesPreview([]);
-            setFile([]);
+            setFiles([]);
           }}
         />
       )}
@@ -68,13 +61,31 @@ const ChatFooter = ({ user }) => {
             }}
           >
             <FileUpload
-              addFile={(newPreview, newMedia) => {
+              addFile={(newFile, filePreview) => {
                 const id = crypto.randomUUID();
-                setFilesPreview((previews) => [
-                  ...previews,
-                  { id, preview: newPreview },
+                setFiles((file) => [
+                  ...file,
+                  {
+                    id,
+                    payload: newFile,
+                    preview: (
+                      <div style={{ position: "relative" }}>
+                        <button
+                          className="delete-file-btn"
+                          style={{ position: "absolute", top: 0, right: 0 }}
+                          onClick={() => {
+                            setFiles((files) =>
+                              files.filter((file) => file.id !== id)
+                            );
+                          }}
+                        >
+                          <TrashIcon size={20} color="red" strokeWidth={2} />
+                        </button>{" "}
+                        {filePreview}
+                      </div>
+                    ),
+                  },
                 ]);
-                setFile((file) => [...file, { id, file: newMedia }]);
               }}
             />
             <button

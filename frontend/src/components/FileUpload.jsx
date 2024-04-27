@@ -12,14 +12,14 @@ const FileUpload = ({ addFile }) => {
       let filePreview;
       if (fileType === "image") {
         filePreview = (
-          <img key={crypto.randomUUID()} src={URL.createObjectURL(file)} />
+          <img src={URL.createObjectURL(file)} />
         );
       } else {
         filePreview = (
-          <GenericFilePreview key={crypto.randomUUID()} fileName={file.name} />
+          <GenericFilePreview fileName={file.name} />
         );
       }
-      addFile(filePreview, file);
+      addFile(file, filePreview);
     });
   };
 
