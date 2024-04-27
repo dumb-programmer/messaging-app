@@ -1,18 +1,19 @@
 @import url("https://fonts.googleapis.com/css?family=Lato");
 
 :root {
-    --primary-clr: #466543;
-    --danger-clr: #ff3f3f;
-    --gap-md: 0.8rem;
-    --gap-lg: 1rem;
+  --primary-clr: #353a34;
+  --danger-clr: #e20000;
+  --gap-sm: 0.3rem;
+  --gap-md: 0.8rem;
+  --gap-lg: 1rem;
 }
 
 * {
-    margin: 0px;
-    padding: 0px;
-    box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Lato;
+  font-family: Lato;
 }

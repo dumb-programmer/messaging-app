@@ -1,91 +1,111 @@
 .flex {
-    display: flex;
+  display: flex;
 }
 
 .flex-column {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .flex-row {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 .justify-center {
-    justify-content: center;
+  justify-content: center;
 }
 
 .justify-between {
-    justify-content: space-between;
+  justify-content: space-between;
 }
 
 .justify-end {
-    justify-content: flex-end;
+  justify-content: flex-end;
 }
 
 .align-center {
-    align-items: center;
+  align-items: center;
 }
 
 .row-reverse {
-    flex-direction: row-reverse;
+  flex-direction: row-reverse;
+}
+
+.gap-sm {
+  gap: var(--gap-sm);
 }
 
 .gap-md {
-    gap: var(--gap-md);
+  gap: var(--gap-md);
 }
 
 .break-work {
-    word-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .centered {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn {
-    all: unset;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 100ms;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    font-size: 0.8rem;
+  all: unset;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 100ms;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-size: 0.8rem;
 }
 
 .primary-btn {
-    background-color: var(--primary-clr);
-    color: #fff;
+  background-color: var(--primary-clr);
+  color: #fff;
 }
 
 .secondary-btn:hover {
-    background-color: #eee;
+  background-color: #eee;
 }
 
 .danger-btn {
-    background-color: var(--danger-clr) !important;
-    color: white !important;
+  background-color: var(--danger-clr) !important;
+  color: white !important;
 }
 
 .avatar {
-    object-fit: cover;
-    border-radius: 50%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .avatar-sm {
-    height: 20px;
-    width: 20px;
+  height: 20px;
+  width: 20px;
 }
 
 .avatar-md {
-    height: 40px;
-    width: 40px;
+  height: 40px;
+  width: 40px;
 }
 
 .avatar-lg {
-    height: 60px;
-    width: 60px;
+  height: 60px;
+  width: 60px;
+}
+
+.text-xs {
+  font-size: 0.5rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-md {
+  font-size: 0.8rem;
+}
+
+.text-large {
+  font-size: 1.2rem;
 }

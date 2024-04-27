@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 
-const useApi = (cb, dependencyArray = []) => {
+const useApi = (cb) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -27,7 +27,7 @@ const useApi = (cb, dependencyArray = []) => {
         return () => {
             stale = true;
         }
-    }, [...dependencyArray]);
+    }, [cb]);
 
     return { data, setData, loading, error };
 }

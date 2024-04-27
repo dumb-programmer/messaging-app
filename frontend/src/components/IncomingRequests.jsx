@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import getIncomingRequests from "../api/getIncomingRequests";
 import useApi from "../hooks/useApi";
 import useAuthContext from "../hooks/useAuthContext";
@@ -6,8 +7,8 @@ import RequestSkeleton from "./RequestSkeleton";
 
 const IncomingRequests = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(() =>
-    getIncomingRequests(auth.token)
+  const { data, setData, loading, error } = useApi(
+    useCallback(() => getIncomingRequests(auth.token), [auth])
   );
 
   if (loading) {

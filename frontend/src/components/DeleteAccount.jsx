@@ -4,9 +4,13 @@ import DeleteAccountConfirmationModal from "./DeleteAccountConfirmationModal";
 const DeleteAccount = () => {
   const [showModal, setShowModal] = useState(false);
   return (
-    <div>
-      <h2>Delete Account</h2>
-      <button className="btn danger-btn" onClick={() => setShowModal(true)}>
+    <div style={{ marginTop: 10 }}>
+      <h3>Delete Account</h3>
+      <button
+        className="btn danger-btn"
+        style={{ marginTop: 10 }}
+        onClick={() => setShowModal(true)}
+      >
         Delete Account
       </button>
       {showModal && (

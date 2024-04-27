@@ -27,14 +27,14 @@ const ChatHeader = ({ user, onBack }) => {
             alt="user avatar"
           />
         </div>
-        <div>
+        <div className="flex flex-column gap-sm">
           <h3>{`${firstName} ${lastName}`}</h3>
-          <span style={{ color: "grey" }}>@{username}</span>
+          <p className="text-sm" style={{ color: "#607274" }}>@{username}</p>
           {status === "online" && (
             <p className="user-status user-online">Online</p>
           )}
           {status === "offline" && (
-            <p className="user-status">
+            <p className="user-status text-sm">
               Last Seen {getRelativeDate(new Date(lastSeen))}
             </p>
           )}

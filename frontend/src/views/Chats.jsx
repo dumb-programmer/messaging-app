@@ -122,9 +122,9 @@ const Chats = () => {
   }, [socket, data, updateLatestMessages]);
 
   return (
-    <div className="flex" style={{ maxHeight: "100%" }}>
+    <div className="flex" style={{ height: "100%" }}>
       <div className={`chat-messages ${selectedUser ? "chat__active" : ""}`}>
-        <h2>Chats</h2>
+        <h2 style={{ padding: 10 }}>Chats</h2>
         <div className="messages">
           {loading && <ChatSkeleton />}
           {error && <div>Error</div>}

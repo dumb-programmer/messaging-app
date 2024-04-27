@@ -23,16 +23,18 @@ const PendingRequest = ({ request, onSuccess }) => {
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
         <img
-          className="avatar"
+          className="avatar avatar-lg"
           src={`http://localhost:3000/${request.to.avatar}`}
         />
-        <div>
+        <div className="flex flex-column gap-sm">
           <p>{`${request.to.firstName} ${request.to.lastName}`}</p>
-          <span style={{ color: "grey" }}>@{request.to.username}</span>
+          <p className="text-sm" style={{ color: "#607274" }}>
+            @{request.to.username}
+          </p>
         </div>
       </div>
       <div style={{ display: "flex", gap: "1rem" }}>
-        <button onClick={handleCancel}>Cancel</button>
+        <button className="btn danger-btn" onClick={handleCancel}>Cancel</button>
       </div>
     </div>
   );

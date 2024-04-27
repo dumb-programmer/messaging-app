@@ -8,8 +8,9 @@ const Settings = () => {
   return (
     <div style={{ padding: 10 }}>
       <h2>Settings</h2>
-      <div className="flex flex-column gap-md" style={{ padding: 20 }}>
+      <div className="flex flex-column gap-md" style={{ padding: 10 }}>
         <AvatarField />
+        <h3>General Information</h3>
         <FirstNameField />
         <LastNameField />
         <ChangePassword />

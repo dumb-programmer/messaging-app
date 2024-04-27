@@ -7,12 +7,12 @@ const ChangePassword = () => {
   const Toast = useToastContext();
 
   return (
-    <>
-      <h2>Password</h2>
+    <div style={{ marginTop: 10 }}>
+      <h3>Password</h3>
       <button
         className="btn primary-btn"
+        style={{ marginTop: 10 }}
         type="button"
-        style={{ maxWidth: 200 }}
         onClick={() => setShowModal(true)}
       >
         Change Password
@@ -30,7 +30,7 @@ const ChangePassword = () => {
           }}
         />
       )}
-    </>
+    </div>
   );
 };
 

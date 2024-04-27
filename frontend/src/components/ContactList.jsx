@@ -44,10 +44,21 @@ const ContactList = () => {
               </div>
             </div>
             <div style={{ display: "flex", gap: "1rem" }}>
-              <Link to="/" state={{ user: friend.user }}>
-                <ChatIcon size={20} color="grey" strokeWidth={2} />
+              <Link
+                aria-label="chat"
+                className="btn"
+                style={{ borderRadius: "50%", backgroundColor: "#eeeeee" }}
+                to="/"
+                state={{ user: friend.user }}
+              >
+                <ChatIcon size={20} color="gray" strokeWidth={2} />
               </Link>
               <button
+                className="btn"
+                style={{
+                  border: "1px solid var(--danger-clr)",
+                  color: "var(--danger-clr)",
+                }}
                 onClick={() => {
                   setSelectedFriend(friend);
                   setShowModal(true);

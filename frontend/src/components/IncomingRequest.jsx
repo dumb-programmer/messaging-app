@@ -43,17 +43,17 @@ const IncomingRequest = ({ request, onSuccess }) => {
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
         <img
-          className="avatar"
+          className="avatar avatar-lg"
           src={`http://localhost:3000/${request.from.avatar}`}
         />
-        <div>
+        <div className="flex flex-column gap-sm">
           <p>{`${request.from.firstName} ${request.from.lastName}`}</p>
-          <span style={{ color: "grey" }}>@{request.from.username}</span>
+          <p className="text-sm" style={{ color: "#607274" }}>@{request.from.username}</p>
         </div>
       </div>
       <div style={{ display: "flex", gap: "1rem" }}>
-        <button onClick={handleDecline}>Decline</button>
-        <button onClick={handleAccept}>Accept</button>
+        <button className="btn secondary-btn" onClick={handleDecline}>Decline</button>
+        <button className="btn primary-btn" onClick={handleAccept}>Accept</button>
       </div>
     </div>
   );

@@ -14,8 +14,8 @@ const mergeObjects = (obj1, obj2) => {
     return mergedObject;
 }
 
-const useInfiniteApi = (cb, onSuccess = null, deps) => {
-    const { data, setData, loading, error } = useApi(cb, deps);
+const useInfiniteApi = (cb, onSuccess = null) => {
+    const { data, setData, loading, error } = useApi(cb);
     const { isIntersecting, stopObserver } = useIntersectionObserver(".load-more");
     const [loadingMore, setLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
@@ -48,7 +48,7 @@ const useInfiniteApi = (cb, onSuccess = null, deps) => {
         return () => {
             stale = true;
         }
-    }, [loading, loadingMore, hasMore, page, isIntersecting, cb, setData, stopObserver]);
+    }, [loading, loadingMore, hasMore, page, isIntersecting, cb, onSuccess, setData, stopObserver]);
 
     return { data, setData, loading, loadingMore, error };
 };

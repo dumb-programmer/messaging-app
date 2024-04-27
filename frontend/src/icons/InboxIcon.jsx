@@ -1,6 +1,6 @@
 import PropType from "prop-types";
 
-const PaperClipIcon = ({ size, color, strokeWidth }) => {
+const InboxIcon = ({ size, color, strokeWidth }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,17 +12,18 @@ const PaperClipIcon = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="feather feather-paperclip"
+      className="feather feather-inbox"
     >
-      <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+      <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+      <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
     </svg>
   );
 };
 
-PaperClipIcon.propTypes = {
+InboxIcon.propTypes = {
   size: PropType.number,
   color: PropType.string,
   strokeWidth: PropType.number,
 };
 
-export default PaperClipIcon;
+export default InboxIcon;

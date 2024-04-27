@@ -21,9 +21,9 @@ const ChatMessage = ({ message, isActive, onClick }) => {
         className="body flex justify-between align-center"
         style={{ flex: 2 }}
       >
-        <div>
+        <div className="flex flex-column gap-sm">
           <h3>{`${message.latestMessage.user.firstName} ${message.latestMessage.user.lastName}`}</h3>
-          <p>
+          <p className="text-sm">
             {message.latestMessage.content.length > 10
               ? `${message.latestMessage.content
                   .split("")
@@ -32,7 +32,7 @@ const ChatMessage = ({ message, isActive, onClick }) => {
               : message.latestMessage.content}
           </p>
         </div>
-        <p>{getRelativeDate(new Date(message.latestMessage.createdAt))}</p>
+        <p className="text-sm">{getRelativeDate(new Date(message.latestMessage.createdAt))}</p>
       </div>
     </div>
   );

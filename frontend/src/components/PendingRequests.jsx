@@ -1,14 +1,16 @@
+import { useCallback } from "react";
 import getPendingRequests from "../api/getPendingRequest";
 import useApi from "../hooks/useApi";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
+import EmptyState from "./EmptyState";
 import PendingRequest from "./PendingRequest";
 import RequestSkeleton from "./RequestSkeleton";
 
 const PendingRequests = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(() =>
-    getPendingRequests(auth.token)
+  const { data, setData, loading, error } = useApi(
+    useCallback(() => getPendingRequests(auth.token), [auth])
   );
   const Toast = useToastContext();
 
@@ -35,9 +37,7 @@ const PendingRequests = () => {
             }}
           />
         ))}
-        {data?.requests?.length === 0 && (
-          <h1 style={{ textAlign: "center" }}>All Caught Up</h1>
-        )}
+        {data?.requests?.length === 0 && <EmptyState />}
       </div>
     );
   } else if (error) {

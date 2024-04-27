@@ -7,6 +7,7 @@ import useAuthContext from "../hooks/useAuthContext";
 import ToastsContainer from "../components/ToastsContainer";
 import SocketProvider from "../components/SocketProvider";
 import "../styles/Index.css";
+import InboxIcon from "../icons/InboxIcon";
 
 const Index = () => {
   const { auth } = useAuthContext();
@@ -39,7 +40,7 @@ const Index = () => {
               </li>
               <li className="tab">
                 <NavLink to="/requests">
-                  <PeoplesIcon size={23} color="black" strokeWidth={1.5} />
+                  <InboxIcon size={23} color="black" strokeWidth={1.5} />
                   Requests
                 </NavLink>
               </li>
@@ -68,9 +69,9 @@ const Index = () => {
                 objectFit: "cover",
               }}
             />
-            <div>
+            <div className="flex flex-column gap-sm">
               <h4>{`${firstName} ${lastName}`}</h4>
-              <span style={{ color: "grey" }}>@{username}</span>
+              <p className="text-sm" style={{ color: "#607274" }}>@{username}</p>
             </div>
           </div>
         </div>
