@@ -3,6 +3,7 @@ import { useState } from "react";
 import updateMessage from "../api/updateMessage";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 
 const EditMessage = ({ message, onSuccess, onCancel }) => {
   const [data, setData] = useState({
@@ -18,14 +19,14 @@ const EditMessage = ({ message, onSuccess, onCancel }) => {
       const response = await updateMessage(message._id, data, auth.token);
       if (response.ok) {
         Toast.show({
-          type: Toast.SUCCESS,
+          type: ToastType.SUCCESS,
           message: "Message updated",
           duration: 3000,
         });
         onSuccess();
       } else {
         Toast.show({
-          type: Toast.FAILURE,
+          type: ToastType.FAILURE,
           message: (await response.json()).message,
           duration: 3000,
         });

@@ -3,6 +3,7 @@ import useAuthContext from "../hooks/useAuthContext";
 import deleteRequest from "../api/deleteRequest";
 import acceptRequest from "../api/acceptRequest";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 
 const IncomingRequest = ({ request, onSuccess }) => {
   const { auth } = useAuthContext();
@@ -13,7 +14,7 @@ const IncomingRequest = ({ request, onSuccess }) => {
     if (response.ok) {
       onSuccess(request._id);
       Toast.show({
-        type: Toast.SUCCESS,
+        type: ToastType.SUCCESS,
         message: "Request declined",
         duration: 3000,
       });
@@ -25,7 +26,7 @@ const IncomingRequest = ({ request, onSuccess }) => {
     if (response.ok) {
       onSuccess(request._id);
       Toast.show({
-        type: Toast.SUCCESS,
+        type: ToastType.SUCCESS,
         message: "Request accepted",
         duration: 3000,
       });
@@ -48,12 +49,18 @@ const IncomingRequest = ({ request, onSuccess }) => {
         />
         <div className="flex flex-column gap-sm">
           <p>{`${request.from.firstName} ${request.from.lastName}`}</p>
-          <p className="text-sm" style={{ color: "#607274" }}>@{request.from.username}</p>
+          <p className="text-sm" style={{ color: "#607274" }}>
+            @{request.from.username}
+          </p>
         </div>
       </div>
       <div style={{ display: "flex", gap: "1rem" }}>
-        <button className="btn secondary-btn" onClick={handleDecline}>Decline</button>
-        <button className="btn primary-btn" onClick={handleAccept}>Accept</button>
+        <button className="btn secondary-btn" onClick={handleDecline}>
+          Decline
+        </button>
+        <button className="btn primary-btn" onClick={handleAccept}>
+          Accept
+        </button>
       </div>
     </div>
   );

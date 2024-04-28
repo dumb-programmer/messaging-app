@@ -29,7 +29,7 @@
 }
 
 .toast-failure .progress-bar {
-    background-color: red;
+    background-color: var(--danger-clr);
 }
 
 .toasts-container {

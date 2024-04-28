@@ -4,9 +4,9 @@ import Toast from "./Toast";
 const Toasts = ({ toasts }) => {
   return (
     <div className="toasts-container">
-      {toasts.map((toast, idx) => (
+      {toasts.map((toast) => (
         <Toast
-          key={idx}
+          key={toast.id}
           type={toast.type}
           message={toast.message}
           duration={toast.duration}

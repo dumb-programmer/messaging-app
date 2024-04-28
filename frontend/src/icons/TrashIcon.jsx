@@ -12,6 +12,7 @@ const TrashIcon = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-label="trash-icon"
       className="feather feather-trash"
     >
       <polyline points="3 6 5 6 21 6"></polyline>

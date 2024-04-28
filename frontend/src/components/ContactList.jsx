@@ -5,6 +5,7 @@ import useApi from "../hooks/useApi";
 import getFriends from "../api/getFriends";
 import UnfriendConfirmationModal from "./UnfriendConfirmationModal";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 import ChatIcon from "../icons/ChatIcon";
 
 const ContactList = () => {
@@ -81,7 +82,7 @@ const ContactList = () => {
               setSelectedFriend(null);
               setShowModal(false);
               Toast.show({
-                type: Toast.SUCCESS,
+                type: ToastType.SUCCESS,
                 message: "Removed friend",
                 duration: 3000,
               });

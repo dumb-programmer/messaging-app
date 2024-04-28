@@ -12,6 +12,7 @@ const ChevronRight = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-label="chevron-right-icon"
       className="feather feather-chevron-right"
     >
       <polyline points="9 18 15 12 9 6"></polyline>

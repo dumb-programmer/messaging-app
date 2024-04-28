@@ -12,6 +12,7 @@ const CrossIcon = ({ size, color, strokeWidth }) => {
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-label="cross-icon"
       className="feather feather-cross"
     >
       <line x1="18" y1="6" x2="6" y2="18"></line>

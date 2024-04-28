@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
-import useToastContext from "../hooks/useToastContext";
+import useToastContext, { types as ToastType } from "../hooks/useToastContext";
 import ChevronDown from "../icons/ChevronDown";
 import DeleteFileConfirmationModal from "./DeleteFileConfirmationModal";
 
@@ -33,7 +33,7 @@ const FileDropdown = ({ messageId, file }) => {
             messageId={messageId}
             onSuccess={() => {
               Toast.show({
-                type: Toast.SUCCESS,
+                type: ToastType.SUCCESS,
                 message: "File deleted",
                 duration: 3000,
               });

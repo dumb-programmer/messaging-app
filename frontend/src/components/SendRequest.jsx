@@ -2,6 +2,7 @@ import { useState } from "react";
 import sendRequest from "../api/sendRequest";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 
 const SendRequest = () => {
   const [username, setUsername] = useState("");
@@ -16,7 +17,7 @@ const SendRequest = () => {
         throw new Error("Error occurred", { cause: { response } });
       } else {
         Toast.show({
-          type: Toast.SUCCESS,
+          type: ToastType.SUCCESS,
           message: "Friend request sent",
           duration: 3000,
         });
@@ -25,14 +26,14 @@ const SendRequest = () => {
       switch (error?.cause?.response?.status) {
         case 404:
           Toast.show({
-            type: Toast.FAILURE,
+            type: ToastType.FAILURE,
             message: "No user with this username exists",
             duration: 3000,
           });
           break;
         default:
           Toast.show({
-            type: Toast.FAILURE,
+            type: ToastType.FAILURE,
             message:
               "An Unkown error has occurred, be sure to check the username",
             duration: 3000,

@@ -5,7 +5,11 @@ import CrossIcon from "../icons/CrossIcon";
 const FilesPreview = ({ files, resetFiles }) => {
   return (
     <div className="files-preview">
-      <button className="btn secondary-btn centered" onClick={resetFiles}>
+      <button
+        aria-label="close-files"
+        className="btn centered"
+        onClick={resetFiles}
+      >
         <CrossIcon size={20} strokeWidth={2} color="white" />
       </button>
       <div className="carousal-container">

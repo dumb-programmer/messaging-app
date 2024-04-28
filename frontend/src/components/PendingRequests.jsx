@@ -3,6 +3,7 @@ import getPendingRequests from "../api/getPendingRequest";
 import useApi from "../hooks/useApi";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 import EmptyState from "./EmptyState";
 import PendingRequest from "./PendingRequest";
 import RequestSkeleton from "./RequestSkeleton";
@@ -30,7 +31,7 @@ const PendingRequests = () => {
                 ),
               }));
               Toast.show({
-                type: Toast.SUCCESS,
+                type: ToastType.SUCCESS,
                 message: "Request Cancelled",
                 duration: 3000,
               });

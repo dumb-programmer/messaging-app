@@ -4,25 +4,19 @@ import Toasts from "./Toasts";
 import ToastContext from "../context/ToastContext";
 import "../styles/Toast.css";
 
-const types = {
-  SUCCESS: "SUCCESS",
-  FAILURE: "FAILURE",
-};
-
 const ToastsContainer = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
   const show = (newToast) => {
-    setToasts((toasts) => [...toasts, newToast]);
+    const id = crypto.randomUUID();
+    setToasts((toasts) => [...toasts, { id, ...newToast }]);
     setTimeout(() => {
-      setToasts((toasts) =>
-        toasts.filter((toast) => toast._id !== newToast._id)
-      );
+      setToasts((toasts) => toasts.filter((toast) => toast.id !== id));
     }, newToast.duration);
   };
 
   return (
-    <ToastContext.Provider value={{ show, ...types }}>
+    <ToastContext.Provider value={{ show }}>
       {children}
       <Toasts toasts={toasts} />
     </ToastContext.Provider>

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import MoreIcon from "../icons/MoreIcon";
 import DeleteMessageConfirmationModal from "./DeleteMessageConfirmationModal";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 import { createPortal } from "react-dom";
 
 const MessageDropdown = ({ messageId, onEdit }) => {
@@ -44,7 +45,7 @@ const MessageDropdown = ({ messageId, onEdit }) => {
             messageId={messageId}
             onSuccess={() => {
               Toast.show({
-                type: Toast.SUCCESS,
+                type: ToastType.SUCCESS,
                 message: "Message deleted",
                 duration: 3000,
               });

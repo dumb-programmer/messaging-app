@@ -72,14 +72,14 @@ const ChatFooter = ({ user }) => {
                       <div style={{ position: "relative" }}>
                         <button
                           className="delete-file-btn"
-                          style={{ position: "absolute", top: 0, right: 0 }}
+                          aria-label="remove-file"
                           onClick={() => {
                             setFiles((files) =>
                               files.filter((file) => file.id !== id)
                             );
                           }}
                         >
-                          <TrashIcon size={20} color="red" strokeWidth={2} />
+                          <TrashIcon size={15} color="var(--danger-clr)" strokeWidth={2} />
                         </button>{" "}
                         {filePreview}
                       </div>

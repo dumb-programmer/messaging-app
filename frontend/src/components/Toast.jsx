@@ -1,16 +1,16 @@
 import PropTypes from "prop-types";
-import useToastContext from "../hooks/useToastContext";
 import AlertIcon from "../icons/AlertIcon";
 import CheckIcon from "../icons/CheckIcon";
+import { types as ToastType } from "../components/ToastsContainer";
 
 const Toast = ({ type, message, duration }) => {
-  const ToastContext = useToastContext();
-
   const StatusIcon = () => {
     switch (type) {
-      case ToastContext.FAILURE:
-        return <AlertIcon size={24} color={"red"} strokeWidth="2px" />;
-      case ToastContext.SUCCESS:
+      case ToastType.FAILURE:
+        return (
+          <AlertIcon size={24} color={"var(--danger-clr)"} strokeWidth="2px" />
+        );
+      case ToastType.SUCCESS:
         return <CheckIcon size={24} color={"green"} strokeWidth="2px" />;
     }
   };
@@ -18,7 +18,7 @@ const Toast = ({ type, message, duration }) => {
   return (
     <div
       className={`toast ${
-        type === ToastContext.SUCCESS ? "toast-success" : "toast-failure"
+        type === ToastType.SUCCESS ? "toast-success" : "toast-failure"
       }`}
       style={{
         animation: `slide-in 100ms ease-out, slide-out 100ms ${
@@ -30,7 +30,7 @@ const Toast = ({ type, message, duration }) => {
       <p>{message}</p>
       <span
         className="progress-bar"
-        style={{ animationDuration: `${duration + 1000}ms` }}
+        style={{ animationDuration: `${duration + 900}ms` }}
       ></span>
     </div>
   );

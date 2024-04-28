@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ChangePasswordModal from "./ChangePasswordModal";
 import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 
 const ChangePassword = () => {
   const [showModal, setShowModal] = useState(false);
@@ -23,7 +24,7 @@ const ChangePassword = () => {
           onSuccess={() => {
             setShowModal(false);
             Toast.show({
-              type: Toast.SUCCESS,
+              type: ToastType.SUCCESS,
               message: "Password updated",
               duration: 3000,
             });

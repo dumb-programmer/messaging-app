@@ -43,7 +43,7 @@ const Carousal = ({ items }) => {
     >
       <div>
         {hasPrevious && (
-          <button className="btn centered" onClick={onPrevious}>
+          <button aria-label="previous item" className="btn centered" onClick={onPrevious}>
             <ChevronLeft size={20} color="white" strokeWidth={2} />
           </button>
         )}
@@ -51,7 +51,7 @@ const Carousal = ({ items }) => {
       {items[selected]}
       <div>
         {hasNext && (
-          <button className="btn centered" onClick={onNext}>
+          <button aria-label="next item" className="btn centered" onClick={onNext}>
             <ChevronRight size={20} color="white" strokeWidth={2} />
           </button>
         )}
