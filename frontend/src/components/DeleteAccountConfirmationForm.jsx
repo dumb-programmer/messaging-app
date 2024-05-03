@@ -14,9 +14,9 @@ const DeleteAccountConfirmationForm = ({ onCancel, onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Delete Account</h2>
-      <p>
+    <form onSubmit={handleSubmit} style={{ padding: 10 }}>
+      <h3>Delete Account</h3>
+      <p className="text-sm" style={{ color: "#696969" }}>
         Are you sure you want to delete this account? This action is
         non-recoverable
       </p>

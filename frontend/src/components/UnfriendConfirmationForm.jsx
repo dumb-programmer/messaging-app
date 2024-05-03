@@ -14,16 +14,20 @@ const UnfriendForm = ({ selectedFriend, onSuccess, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ padding: 10 }}>
       <h3>Unfriend</h3>
-      <p className="break-word">
+      <p className="break-word text-sm" style={{ color: "#696969" }}>
         Are you sure you want to unfriend{" "}
         {`${selectedFriend.user.firstName} ${selectedFriend.user.lastName}`},
         this action is non-reversable
       </p>
       <div className="flex justify-end gap-md">
-        <button className="btn secondary-btn" onClick={onCancel}>Cancel</button>
-        <button className="btn danger-btn" type="submit">Yes</button>
+        <button className="btn secondary-btn" onClick={onCancel}>
+          Cancel
+        </button>
+        <button className="btn danger-btn" type="submit">
+          Yes
+        </button>
       </div>
     </form>
   );

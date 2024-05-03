@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
 import getRelativeDate from "../utils/getRelativeDate";
 import File from "./File";
 import useAuthContext from "../hooks/useAuthContext";
 import MessageDropdown from "./MessageDropdown";
-import EditMessage from "./EditMessage";
+import EditMessageModal from "./EditMessageModal";
 
 const Message = ({ message }) => {
   const { auth } = useAuthContext();
@@ -30,23 +31,11 @@ const Message = ({ message }) => {
         </span>
         {message.content && (
           <div className="message-content">
-            {!edit ? (
-              <>
-                <p>{message.content}</p>
-                {message.from === auth.user._id && (
-                  <MessageDropdown
-                    messageId={message._id}
-                    onEdit={() => setEdit(true)}
-                  />
-                )}
-              </>
-            ) : (
-              <EditMessage
-                message={message}
-                onSuccess={() => {
-                  setEdit(false);
-                }}
-                onCancel={() => setEdit(false)}
+            <p>{message.content}</p>
+            {message.from === auth.user._id && (
+              <MessageDropdown
+                messageId={message._id}
+                onEdit={() => setEdit(true)}
               />
             )}
           </div>
@@ -61,6 +50,15 @@ const Message = ({ message }) => {
             />
           ))}
         </div>
+        {edit &&
+          createPortal(
+            <EditMessageModal
+              onCancel={() => setEdit(false)}
+              onSuccess={() => setEdit(false)}
+              message={message}
+            />,
+            document.querySelector("#root")
+          )}
       </div>
     </div>
   );

@@ -1,21 +1,23 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
-import updateMessage from "../api/updateMessage";
+import PropTypes from "prop-types";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
+import updateMessage from "../api/updateMessage";
 import ToastType from "../constants/ToastType";
 
-const EditMessage = ({ message, onSuccess, onCancel }) => {
+const EditMessageForm = ({ onCancel, onSuccess, message }) => {
+  const { auth } = useAuthContext();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     content: message.content,
     media: message.media,
   });
-  const { auth } = useAuthContext();
   const Toast = useToastContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await updateMessage(message._id, data, auth.token);
       if (response.ok) {
         Toast.show({
@@ -36,44 +38,43 @@ const EditMessage = ({ message, onSuccess, onCancel }) => {
     }
   };
 
-  const handleTextInput = (e) => {
-    setData({
-      ...data,
-      content: e.target.value,
-    });
-  };
-
   return (
-    <form onSubmit={handleSubmit} style={{ position: "relative" }}>
-      <textarea
-        onChange={handleTextInput}
-        value={data.content}
-        style={{ minHeight: 100 }}
-      ></textarea>
-      <div
-        className="flex gap-md justify-end"
-        style={{ position: "absolute", bottom: 10, right: 5 }}
-      >
+    <form
+      style={{ padding: 10 }}
+      onSubmit={loading ? (e) => e.preventDefault() : handleSubmit}
+    >
+      <h3>Edit Message</h3>
+      <div>
+        <textarea
+          style={{ width: "min(80vw, 500px)", height: 100 }}
+          onChange={(e) =>
+            setData((data) => ({ ...data, content: e.target.value }))
+          }
+          required
+        >
+          {data.content}
+        </textarea>
+      </div>
+      <div className="flex justify-end gap-md">
         <button
           className="btn secondary-btn"
-          style={{ color: "black", fontSize: "0.7rem" }}
-          type="button"
           onClick={onCancel}
+          disabled={loading}
         >
           Cancel
         </button>
-        <button type="submit" className="btn primary-btn">
-          Submit
+        <button type="submit" className="btn primary-btn" disabled={loading}>
+          Save
         </button>
       </div>
     </form>
   );
 };
 
-EditMessage.propTypes = {
-  message: PropTypes.object,
-  onSuccess: PropTypes.func,
+EditMessageForm.propTypes = {
   onCancel: PropTypes.func,
+  onSuccess: PropTypes.func,
+  message: PropTypes.object,
 };
 
-export default EditMessage;
+export default EditMessageForm;

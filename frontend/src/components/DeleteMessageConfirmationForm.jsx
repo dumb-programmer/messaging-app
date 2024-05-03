@@ -19,14 +19,17 @@ const DeleteMessageConfirmationForm = ({ messageId, onSuccess, onCancel }) => {
   };
 
   return (
-    <form onSubmit={loading ? (e) => e.preventDefault() : handleSubmit}>
-      <h2>Delete Message</h2>
-      <p>
+    <form
+      style={{ padding: 10 }}
+      onSubmit={loading ? (e) => e.preventDefault() : handleSubmit}
+    >
+      <h3>Delete Message</h3>
+      <p className="text-sm" style={{ color: "#696969" }}>
         Are you sure you want to delete this message? this action is
         non-recoverable.
       </p>
       <div className="flex justify-end gap-md">
-        <button onClick={onCancel} disabled={loading}>
+        <button className="btn secondary-btn" onClick={onCancel} disabled={loading}>
           Cancel
         </button>
         <button type="submit" className="btn danger-btn" disabled={loading}>

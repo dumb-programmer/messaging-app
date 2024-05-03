@@ -54,6 +54,7 @@
 .chat-body {
   overflow-y: scroll;
   background-color: #fff;
+  overflow-x: hidden;
 }
 
 .chat-footer {
@@ -70,7 +71,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 12px;
   border-radius: 20px;
   word-break: break-all;
 }
@@ -82,6 +83,7 @@
 }
 
 .message-container {
+  position: relative;
   display: flex;
   padding: 10px;
 }
@@ -134,26 +136,6 @@
 
 .chat-message__left .message-media {
   border-color: #eee;
-}
-
-.delete-file-btn-container {
-  opacity: 0;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2));
-  display: flex;
-  justify-content: flex-end;
-  transition: opacity 300ms;
-}
-
-.message-media:hover .delete-file-btn-container {
-  opacity: 1;
-}
-
-.message-content:hover .delete-file-btn-container {
-  opacity: 1;
 }
 
 .message-timestamp {
@@ -234,24 +216,51 @@
   background-color: white;
 }
 
+.message-actions-container {
+  display: flex;
+  justify-content: flex-end;
+  background-color: var(--primary-clr);
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  transition: opacity 100ms;
+  border-bottom-right-radius: 20px;
+}
+
+.message-content:hover .message-actions-container{
+  opacity: 1;
+}
+
 .dropdown {
   list-style: none;
   background-color: #fff;
   color: black;
-  animation: show-dropdown 500ms ease-out;
+  animation: show-dropdown 200ms ease-out;
   transform-origin: top;
   position: absolute;
+  min-width: max-content;
   top: 30px;
   margin-left: -15px;
   box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
+  font-size: small;
+  z-index: 2;
+  border: 1px solid #cbcbcb;
 }
 
 .dropdown li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 10px;
   cursor: pointer;
   transition: background-color 100ms;
   overflow: hidden;
+}
+
+.dropdown li:not(:last-child) {
+  border-bottom: 1px solid #cbcbcb;
 }
 
 .dropdown li:hover {

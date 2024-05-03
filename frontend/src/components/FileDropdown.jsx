@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import PropTypes from "prop-types";
-import useToastContext, { types as ToastType } from "../hooks/useToastContext";
+import useToastContext from "../hooks/useToastContext";
+import ToastType from "../constants/ToastType";
 import ChevronDown from "../icons/ChevronDown";
 import DeleteFileConfirmationModal from "./DeleteFileConfirmationModal";
+import TrashIcon from "../icons/TrashIcon";
 
 const FileDropdown = ({ messageId, file }) => {
   const [open, setOpen] = useState(false);
@@ -11,7 +13,7 @@ const FileDropdown = ({ messageId, file }) => {
   const Toast = useToastContext();
 
   return (
-    <div className="delete-file-btn-container">
+    <div className="message-actions-container">
       <button
         className="btn"
         onClick={(e) => {
@@ -23,7 +25,10 @@ const FileDropdown = ({ messageId, file }) => {
       </button>
       {open && (
         <ul className="dropdown">
-          <li onClick={() => setShowDeleteConfirmation(true)}>Delete</li>
+          <li onClick={() => setShowDeleteConfirmation(true)}>
+            <TrashIcon strokeWidth={1.5} size={15} color={"black"} />
+            Delete
+          </li>
         </ul>
       )}
       {showDeleteConfirmation &&

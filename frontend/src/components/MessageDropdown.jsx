@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import MoreIcon from "../icons/MoreIcon";
 import DeleteMessageConfirmationModal from "./DeleteMessageConfirmationModal";
 import useToastContext from "../hooks/useToastContext";
 import ToastType from "../constants/ToastType";
 import { createPortal } from "react-dom";
+import TrashIcon from "../icons/TrashIcon";
+import PenIcon from "../icons/PenIcon";
+import ChevronDown from "../icons/ChevronDown";
 
 const MessageDropdown = ({ messageId, onEdit }) => {
   const [open, setOpen] = useState(false);
@@ -23,7 +25,7 @@ const MessageDropdown = ({ messageId, onEdit }) => {
   }, [open]);
 
   return (
-    <div className="flex flex-column" style={{ position: "relative" }}>
+    <div className="message-actions-container">
       <button
         className="btn"
         onClick={(e) => {
@@ -31,12 +33,18 @@ const MessageDropdown = ({ messageId, onEdit }) => {
           setOpen(!open);
         }}
       >
-        <MoreIcon size={20} color="white" strokeWidth={2} />
+        <ChevronDown size={20} color="white" strokeWidth={2} />
       </button>
       {open && (
-        <ul className="dropdown">
-          <li onClick={onEdit}>Edit</li>
-          <li onClick={() => setShowDeleteConfirmation(true)}>Delete</li>
+        <ul className="dropdown" style={{ right: 2 }}>
+          <li onClick={onEdit}>
+            <PenIcon size={15} color={"black"} strokeWidth={1.5} />
+            Edit
+          </li>
+          <li onClick={() => setShowDeleteConfirmation(true)}>
+            <TrashIcon size={15} color={"black"} strokeWidth={1.5} />
+            Delete
+          </li>
         </ul>
       )}
       {showDeleteConfirmation &&

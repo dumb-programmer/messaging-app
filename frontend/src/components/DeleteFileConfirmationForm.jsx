@@ -24,14 +24,21 @@ const DeleteFileConfirmationForm = ({
   };
 
   return (
-    <form onSubmit={loading ? (e) => e.preventDefault() : handleSubmit}>
-      <h2>Delete File</h2>
-      <p>
+    <form
+      style={{ padding: 10 }}
+      onSubmit={loading ? (e) => e.preventDefault() : handleSubmit}
+    >
+      <h3>Delete File</h3>
+      <p className="text-sm" style={{ color: "#696969" }}>
         Are you sure you want to delete this file? this action is
         non-recoverable.
       </p>
       <div className="flex justify-end gap-md">
-        <button onClick={onCancel} disabled={loading}>
+        <button
+          className="btn secondary-btn"
+          onClick={onCancel}
+          disabled={loading}
+        >
           Cancel
         </button>
         <button type="submit" className="btn danger-btn" disabled={loading}>

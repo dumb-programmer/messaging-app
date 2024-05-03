@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import AlertIcon from "../icons/AlertIcon";
 import CheckIcon from "../icons/CheckIcon";
-import { types as ToastType } from "../components/ToastsContainer";
+import ToastType from "../constants/ToastType";
 
 const Toast = ({ type, message, duration }) => {
   const StatusIcon = () => {
