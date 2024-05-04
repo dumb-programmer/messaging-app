@@ -34,7 +34,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />}>
-            <Route path="/" element={<Chats />} />
+            <Route index element={<Chats />} />
             <Route path="/people" element={<People />} />
             <Route path="/requests" element={<Requests />} />
             <Route path="/settings" element={<Settings />} />

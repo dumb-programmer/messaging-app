@@ -9,7 +9,7 @@ import ChatBody from "./ChatBody";
 import useInfiniteApi from "../hooks/useInfiniteApi";
 import "../styles/Chatbox.css";
 
-const Chatbox = ({ user, replaceLatestMessage, onBack }) => {
+const Chatbox = ({ user, onBack }) => {
   const { auth } = useAuthContext();
   const socket = useSocketContext();
   const chatbodyRef = useRef();
@@ -43,15 +43,6 @@ const Chatbox = ({ user, replaceLatestMessage, onBack }) => {
     };
 
     const onUpdateMessage = ({ messageId, messageData }) => {
-      const message = data.messages.filter(
-        (message) => message._id === messageId
-      )[0];
-      replaceLatestMessage(
-        { messageId, messageData },
-        {
-          latestMessage: { ...message, ...messageData, user },
-        }
-      );
       setData((data) => {
         const messages = data.messages.map((message) => {
           if (message._id === messageId) {
@@ -64,11 +55,6 @@ const Chatbox = ({ user, replaceLatestMessage, onBack }) => {
     };
 
     const onDeleteMessage = (deletedMessage) => {
-      // Get previous message
-      const newMessage = data.messages[data.messages.length - 2] || [];
-      replaceLatestMessage(deletedMessage, {
-        latestMessage: { ...newMessage, user },
-      });
       setData((data) => ({
         messages: data.messages.filter(
           (message) => message._id !== deletedMessage._id
@@ -104,15 +90,7 @@ const Chatbox = ({ user, replaceLatestMessage, onBack }) => {
       socket?.off("delete message", onDeleteMessage);
       socket?.off("delete file", onDeleteFile);
     };
-  }, [
-    data,
-    socket,
-    auth.user._id,
-    user,
-    scrollToBottom,
-    setData,
-    replaceLatestMessage,
-  ]);
+  }, [data, socket, auth.user._id, user, scrollToBottom, setData]);
 
   if (error) {
     return <div>Error</div>;

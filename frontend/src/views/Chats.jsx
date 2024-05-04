@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import getLatestChats from "../api/getLatestChats";
 import useAuthContext from "../hooks/useAuthContext";
@@ -26,70 +26,56 @@ const Chats = () => {
   const [selectedUser, setSelectedUser] = useState(state?.user || null);
   const socket = useSocketContext();
 
-  const updateLatestMessages = useCallback(
+  const messages = useMemo(
+    () =>
+      data?.messages?.reduce((accumulator, currentVal) => {
+        accumulator[currentVal?.latestMessage.user._id] = currentVal;
+        return accumulator;
+      }, {}),
+    [data]
+  );
+
+  const addNewLatestMessage = useCallback(
     (newMessage) => {
       setData((data) => {
-        const existingMessage = data.messages.filter(
-          (message) =>
-            message.latestMessage.user._id === newMessage.latestMessage.user._id
-        )[0];
-        if (existingMessage) {
-          const index = data.messages.indexOf(existingMessage);
-          data.messages[index] = newMessage;
-          data.messages = sortMessagesByDate(data.messages);
-          return { ...data };
-        }
-
-        const messages = sortMessagesByDate([...data.messages, newMessage]);
-        return { messages };
+        messages[newMessage.user._id] = { latestMessage: newMessage };
+        return { ...data, messages: Object.values(messages) };
       });
     },
-    [setData]
+    [setData, messages]
   );
 
   const replaceLatestMessage = useCallback(
-    (previousMessage, newMessage) => {
-      setData((data) => {
-        const message = data.messages.filter(
-          (message) => message.latestMessage._id === previousMessage._id
-        )[0];
-        if (message) {
-          const index = data.messages.indexOf(message);
-          data.messages[index] = newMessage;
-          data.messages = sortMessagesByDate(data.messages);
-          return { ...data };
-        }
-        return data;
-      });
+    (newMessage, friendId) => {
+      const message = messages[friendId];
+      console.log(message);
+      if (message) {
+        messages[friendId] = {
+          latestMessage: { ...newMessage, user: message.latestMessage.user },
+        };
+        setData((data) => ({ ...data, messages: Object.values(messages) }));
+      }
     },
-    [setData]
+    [setData, messages]
   );
 
   const updateUser = useCallback(
     (user) => {
-      const messages = sortMessagesByDate(
-        data?.messages.map((message) => {
-          if (message.latestMessage.user._id === user._id) {
-            message.latestMessage = { ...message.latestMessage, user };
-          }
-          return message;
-        })
-      );
-      setData({ messages });
+      messages[user._id] = {
+        latestMessage: { ...messages[user._id].latestMessage, user },
+      };
+      setData((data) => ({ ...data, messages: Object.values(messages) }));
     },
-    [data, setData]
+    [setData, messages]
   );
 
   useEffect(() => {
-    const onUserStatusChanged = (socketData) => {
-      // Get the user whose status changed
-      const user = data?.messages?.filter(
-        (message) => message.latestMessage.user._id === socketData.userId
-      )[0]?.latestMessage?.user;
-      if (user) {
+    const onUserStatusChanged = (userData) => {
+      const message = messages[userData.userId];
+      if (message) {
         const newUser = {
-          ...user,
-          status: socketData.type,
+          ...message.latestMessage.user,
+          status: userData.type,
           lastSeen: getDate(),
         };
         updateUser(newUser);
@@ -103,23 +89,23 @@ const Chats = () => {
     return () => {
       socket?.off("user status changed", onUserStatusChanged);
     };
-  }, [updateUser, selectedUser, data, socket]);
+  }, [updateUser, selectedUser, messages, socket]);
 
   useEffect(() => {
     const onNewMessage = (newMessage) => {
-      const user = data?.messages?.filter(
-        (message) =>
-          message.latestMessage.user._id === newMessage.to ||
-          message.latestMessage.user._id === newMessage.from
-      )[0]?.latestMessage?.user;
-      updateLatestMessages({ latestMessage: { ...newMessage, user } });
+      addNewLatestMessage(newMessage);
     };
-    socket?.on("new message", onNewMessage);
+    const onUpdateMessage = (updatedMessage, friendId) => {
+      replaceLatestMessage(updatedMessage, friendId);
+    };
+    socket?.on("latest message", onNewMessage);
+    socket?.on("update latest message", onUpdateMessage);
 
     return () => {
-      socket?.off("new message", onNewMessage);
+      socket?.off("latest message", onNewMessage);
+      socket?.off("update latest message", onUpdateMessage);
     };
-  }, [socket, data, updateLatestMessages]);
+  }, [socket, data, addNewLatestMessage, replaceLatestMessage]);
 
   return (
     <div className="flex" style={{ height: "100%" }}>
@@ -128,21 +114,17 @@ const Chats = () => {
         <div className="messages">
           {loading && <ChatSkeleton />}
           {error && <div>Error</div>}
-          <ChatMessageList
-            messages={data?.messages}
-            selectedUser={selectedUser}
-            setSelectedUser={setSelectedUser}
-          />
+          {!loading && !error && (
+            <ChatMessageList
+              messages={messages && sortMessagesByDate(Object.values(messages))}
+              selectedUser={selectedUser}
+              setSelectedUser={setSelectedUser}
+            />
+          )}
         </div>
       </div>
       {selectedUser && (
-        <ChatBox
-          user={selectedUser}
-          updateUser={updateUser}
-          updateLatestMessages={updateLatestMessages}
-          replaceLatestMessage={replaceLatestMessage}
-          onBack={() => setSelectedUser(null)}
-        />
+        <ChatBox user={selectedUser} onBack={() => setSelectedUser(null)} />
       )}
     </div>
   );
