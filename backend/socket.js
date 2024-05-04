@@ -76,7 +76,7 @@ io.on("connection", async socket => {
 
     socket.on("typing", (toUserId) => {
         const socketId = users[toUserId];
-        io.to(socketId).emit("typing");
+        io.to(socketId).emit("typing", socket.user._id);
     });
 });
 

@@ -3,7 +3,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const fs = require("fs/promises");
 const { body, validationResult } = require("express-validator");
 
-const { Message, Friend, FileMeta } = require("../models");
+const { Message, Friend, FileMeta, User } = require("../models");
 const { io, getUsers } = require("../socket");
 const storeFiles = require("../utils/storeFiles");
 
@@ -148,9 +148,25 @@ const createMessage = [
       content,
       files,
     });
+    const [fromUser, toUser] = await Promise.all([
+      User.findById(req.user._id, {
+        password: 0,
+        bio: 0,
+        username: 0,
+      }),
+      User.findById(to, {
+        password: 0,
+        bio: 0,
+        username: 0,
+      }),
+    ]);
+
     const toSocket = getUsers()[to];
     const fromSocket = getUsers()[req.user._id.toString()];
     io.to(toSocket).to(fromSocket).emit("new message", message);
+
+    io.to(toSocket).emit("latest message", { ...message._doc, user: fromUser });
+    io.to(fromSocket).emit("latest message", { ...message._doc, user: toUser });
     res.sendStatus(200);
   }),
 ];
@@ -173,15 +189,45 @@ const updateMessage = [
         return res.sendStatus(404);
       } else if (message.from.toString() === req.user._id.toString()) {
         const { content } = req.body;
+
         await Message.updateOne({ _id: messageId }, { content });
+
         const toSocket = getUsers()[message.to.toString()];
         const fromSocket = getUsers()[req.user._id.toString()];
-        io.to(toSocket)
-          .to(fromSocket)
-          .emit("update message", {
-            messageId: message._id.toString(),
-            messageData: { content },
-          });
+        io.to(toSocket).to(fromSocket).emit("update message", {
+          messageId: message._id.toString(),
+          messageData: { content },
+        });
+
+        const friendId =
+          message.to.toString() === req.user._id.toString()
+            ? message.from
+            : message.to;
+
+        const latestMessage = await Message.findOne(
+          {
+            $or: [
+              { from: friendId, to: req.user._id },
+              { from: req.user._id, to: friendId },
+            ],
+          },
+          { files: 0, to: 0, from: 0 }
+        ).sort({ createdAt: "desc" });
+
+        // If the message being updated is the latest message between the users
+        if (latestMessage._id.toString() === message._id.toString()) {
+          io.to(fromSocket).emit(
+            "update latest message",
+            latestMessage,
+            friendId
+          );
+          io.to(toSocket).emit(
+            "update latest message",
+            latestMessage,
+            req.user._id
+          );
+        }
+
         res.sendStatus(200);
       } else {
         res.sendStatus(403);
@@ -218,10 +264,51 @@ const deleteMessage = [
             })
           );
         }
+
+        const friendId =
+          message.to.toString() === req.user._id.toString()
+            ? message.from
+            : message.to;
+
+        const beforeLatestMessage = await Message.findOne(
+          {
+            $or: [
+              { from: friendId, to: req.user._id },
+              { from: req.user._id, to: friendId },
+            ],
+          },
+          { files: 0, to: 0, from: 0 }
+        ).sort({ createdAt: "desc" });
+
         await Message.deleteOne({ _id: messageId });
         const toSocket = getUsers()[message.to.toString()];
         const fromSocket = getUsers()[req.user._id.toString()];
         io.to(toSocket).to(fromSocket).emit("delete message", message);
+
+        // If the message being deleted is the latest message between the users
+        if (beforeLatestMessage._id.toString() === message._id.toString()) {
+          const latestMessage = await Message.findOne(
+            {
+              $or: [
+                { from: friendId, to: req.user._id },
+                { from: req.user._id, to: friendId },
+              ],
+            },
+            { files: 0, to: 0, from: 0 }
+          ).sort({ createdAt: "desc" });
+
+          io.to(fromSocket).emit(
+            "update latest message",
+            latestMessage,
+            friendId
+          );
+          io.to(toSocket).emit(
+            "update latest message",
+            latestMessage,
+            req.user._id
+          );
+        }
+
         return res.sendStatus(200);
       }
       res.sendStatus(403);
