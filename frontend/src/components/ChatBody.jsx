@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import MessagesSkeleton from "./MessagesSkeleton";
 import Message from "./Message";
 import Spinner from "./Spinner";
@@ -7,7 +7,7 @@ import Spinner from "./Spinner";
 const ChatBody = ({
   loading,
   loadingMore,
-  data,
+  messages,
   chatbodyRef,
   scrollToBottom,
 }) => {
@@ -16,15 +16,6 @@ const ChatBody = ({
       scrollToBottom();
     }
   }, [scrollToBottom, loading]);
-
-  const messages = useMemo(
-    () =>
-      data &&
-      data.messages.sort(
-        (m1, m2) => new Date(m1.createdAt) - new Date(m2.createdAt)
-      ),
-    [data]
-  );
 
   return (
     <div className="chat-body" ref={chatbodyRef}>
@@ -53,7 +44,7 @@ const ChatBody = ({
 };
 
 ChatBody.propTypes = {
-  data: PropTypes.object,
+  messages: PropTypes.array,
   loading: PropTypes.bool,
   loadingMore: PropTypes.bool,
   chatbodyRef: PropTypes.object,

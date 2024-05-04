@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import PropTypes from "prop-types";
 import getMessages from "../api/getMessages";
 import useAuthContext from "../hooks/useAuthContext";
@@ -21,6 +21,15 @@ const Chatbox = ({ user, onBack }) => {
     () => chatbodyRef.current.scrollBy({ top: 200, behavior: "smooth" })
   );
 
+  const messages = useMemo(
+    () =>
+      data?.messages?.reduce((accumulator, currentMessage) => {
+        accumulator[currentMessage?._id] = currentMessage;
+        return accumulator;
+      }, {}),
+    [data]
+  );
+
   const scrollToBottom = useCallback(() => {
     chatbodyRef.current.scrollBy({
       top: chatbodyRef.current.scrollHeight,
@@ -31,9 +40,11 @@ const Chatbox = ({ user, onBack }) => {
   useEffect(() => {
     const onNewMessage = (message) => {
       if (message.from === user._id || message.from === auth.user._id) {
+        messages[message._id] = message;
+
         setData((data) => ({
           ...data,
-          messages: [...data.messages, message],
+          messages: [...Object.values(messages)],
         }));
         chatbodyRef.current.scrollBy({
           top: chatbodyRef.current.scrollHeight + 50,
@@ -42,39 +53,32 @@ const Chatbox = ({ user, onBack }) => {
       }
     };
 
-    const onUpdateMessage = ({ messageId, messageData }) => {
-      setData((data) => {
-        const messages = data.messages.map((message) => {
-          if (message._id === messageId) {
-            return { ...message, ...messageData };
-          }
-          return message;
+    const onUpdateMessage = (message) => {
+      if (message.from === user._id || message.from === auth.user._id) {
+        messages[message._id] = message;
+
+        setData((data) => {
+          return { ...data, messages: [...Object.values(messages)] };
         });
-        return { messages };
-      });
+      }
     };
 
-    const onDeleteMessage = (deletedMessage) => {
-      setData((data) => ({
-        messages: data.messages.filter(
-          (message) => message._id !== deletedMessage._id
-        ),
-      }));
+    const onDeleteMessage = (message) => {
+      if (message.from === user._id || message.from === auth.user._id) {
+        delete messages[message._id];
+
+        setData((data) => ({
+          ...data,
+          messages: [...Object.values(messages)],
+        }));
+      }
     };
 
     const onDeleteFile = (socketData) => {
-      setData((data) => {
-        const messages = data.messages.map((message) => {
-          if (message._id === socketData.messageId) {
-            const newFiles = message.files.filter(
-              (file) => file !== socketData.file
-            );
-            message.files = newFiles;
-          }
-          return message;
-        });
-        return { messages };
-      });
+      messages[socketData.messageId].files = messages[
+        socketData.messageId
+      ].files.filter((file) => file !== socketData.file);
+      setData((data) => ({ ...data, messages: [...Object.values(messages)] }));
     };
 
     socket?.on("new message", onNewMessage);
@@ -90,7 +94,7 @@ const Chatbox = ({ user, onBack }) => {
       socket?.off("delete message", onDeleteMessage);
       socket?.off("delete file", onDeleteFile);
     };
-  }, [data, socket, auth.user._id, user, scrollToBottom, setData]);
+  }, [data, messages, socket, auth.user._id, user, scrollToBottom, setData]);
 
   if (error) {
     return <div>Error</div>;
@@ -102,7 +106,12 @@ const Chatbox = ({ user, onBack }) => {
       <ChatBody
         loading={loading}
         loadingMore={loadingMore}
-        data={data}
+        messages={
+          messages &&
+          Object.values(messages).sort(
+            (m1, m2) => new Date(m1.createdAt) - new Date(m2.createdAt)
+          )
+        }
         chatbodyRef={chatbodyRef}
         scrollToBottom={scrollToBottom}
       />
