@@ -58,12 +58,15 @@
 }
 
 .chat-footer {
+  display: flex;
+  gap: 0.2rem;
   padding: 10px;
   background-color: #eee;
 }
 
 .chat-footer form {
   position: relative;
+  flex: 1;
 }
 
 .message-content {
@@ -228,7 +231,7 @@
   border-bottom-right-radius: 20px;
 }
 
-.message-content:hover .message-actions-container{
+.message-content:hover .message-actions-container {
   opacity: 1;
 }
 

@@ -12,7 +12,7 @@ import TrashIcon from "../icons/TrashIcon";
 const ChatFooter = ({ user }) => {
   const socket = useSocketContext();
   const { auth } = useAuthContext();
-  
+
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState([]);
 
@@ -79,7 +79,11 @@ const ChatFooter = ({ user }) => {
                             );
                           }}
                         >
-                          <TrashIcon size={15} color="var(--danger-clr)" strokeWidth={2} />
+                          <TrashIcon
+                            size={15}
+                            color="var(--danger-clr)"
+                            strokeWidth={2}
+                          />
                         </button>{" "}
                         {filePreview}
                       </div>
@@ -88,14 +92,14 @@ const ChatFooter = ({ user }) => {
                 ]);
               }}
             />
-            <button
-              type="submit"
-              className="btn primary-btn flex justify-center align-center"
-            >
-              <SendIcon color="white" size={20} strokeWidth={2} />
-            </button>
           </div>
         </form>
+        <button
+          type="submit"
+          className="btn primary-btn flex justify-center align-center"
+        >
+          <SendIcon color="white" size={20} strokeWidth={2} />
+        </button>
       </div>
     </>
   );

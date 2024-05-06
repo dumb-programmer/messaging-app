@@ -27,7 +27,7 @@ const FileUpload = ({ addFile }) => {
     <>
       <button
         type="button"
-        className="btn secondary-btn"
+        className="btn"
         onClick={() => fileInputRef.current.click()}
       >
         <PaperClipIcon size={20} color="grey" strokeWidth={2} />
