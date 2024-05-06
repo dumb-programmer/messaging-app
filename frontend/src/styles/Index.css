@@ -103,7 +103,7 @@ main {
   display: flex;
   align-items: center;
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   padding: 10px;
   gap: 0.8rem;
 }

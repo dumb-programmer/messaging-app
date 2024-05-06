@@ -49,7 +49,8 @@
 }
 
 .btn {
-  all: unset;
+  background-color: unset;
+  border: none;
   padding: 10px;
   cursor: pointer;
   transition: background-color 100ms;
