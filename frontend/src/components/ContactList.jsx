@@ -1,75 +1,40 @@
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
-import useApi from "../hooks/useApi";
+import useInfiniteApi from "../hooks/useInfiniteApi";
 import getFriends from "../api/getFriends";
 import UnfriendConfirmationModal from "./UnfriendConfirmationModal";
 import useToastContext from "../hooks/useToastContext";
 import ToastType from "../constants/ToastType";
-import ChatIcon from "../icons/ChatIcon";
+import FriendItem from "./FriendItem";
 
 const ContactList = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(
-    useCallback(() => getFriends(auth.token), [auth.token])
+  const { data, setData, loading, error } = useInfiniteApi(
+    useCallback((page) => getFriends(auth.token, page), [auth.token])
   );
   const Toast = useToastContext();
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <>
+        <p>Loading...</p>
+        <div className="load-more"></div>
+      </>
+    );
   } else if (data) {
     return (
       <>
         {data.friends.map((friend) => (
-          <div
+          <FriendItem
             key={friend._id}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px 40px",
-            }}
-          >
-            <div
-              style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}
-            >
-              <img
-                className="avatar avatar-lg"
-                src={`http://localhost:3000/${friend.user.avatar}`}
-              />
-              <div>
-                <p>{`${friend.user.firstName} ${friend.user.lastName}`}</p>
-                <span style={{ color: "grey" }}>@{friend.user.username}</span>
-              </div>
-            </div>
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <Link
-                aria-label="chat"
-                className="btn"
-                style={{ borderRadius: "50%", backgroundColor: "#eeeeee" }}
-                to="/"
-                state={{ user: friend.user }}
-              >
-                <ChatIcon size={20} color="gray" strokeWidth={2} />
-              </Link>
-              <button
-                className="btn"
-                style={{
-                  border: "1px solid var(--danger-clr)",
-                  color: "var(--danger-clr)",
-                }}
-                onClick={() => {
-                  setSelectedFriend(friend);
-                  setShowModal(true);
-                }}
-              >
-                Unfriend
-              </button>
-            </div>
-          </div>
+            friend={friend}
+            setShowModal={setShowModal}
+            setSelectedFriend={setSelectedFriend}
+          />
         ))}
+        <div className="load-more"></div>
         {showModal && (
           <UnfriendConfirmationModal
             selectedFriend={selectedFriend}

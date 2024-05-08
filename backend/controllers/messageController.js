@@ -192,12 +192,11 @@ const updateMessage = [
 
         await Message.updateOne({ _id: messageId }, { content });
 
+        const updatedMessage = await Message.findOne({ _id: messageId });
+
         const toSocket = getUsers()[message.to.toString()];
         const fromSocket = getUsers()[req.user._id.toString()];
-        io.to(toSocket).to(fromSocket).emit("update message", {
-          messageId: message._id.toString(),
-          messageData: { content },
-        });
+        io.to(toSocket).to(fromSocket).emit("update message", updatedMessage);
 
         const friendId =
           message.to.toString() === req.user._id.toString()

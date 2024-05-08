@@ -2,7 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const { Friend } = require("../models");
 
 const getFriends = asyncHandler(async (req, res) => {
-  const { page } = req.query;
+  const { page = 1 } = req.query;
   const PAGE_SIZE = 10;
   const friends = await Friend.find({
     $or: [{ user1: req.user._id }, { user2: req.user._id }],
@@ -11,6 +11,7 @@ const getFriends = asyncHandler(async (req, res) => {
     .populate("user2", { password: 0, bio: 0 })
     .limit(PAGE_SIZE)
     .skip((page - 1) * PAGE_SIZE);
+
   res.json({
     friends: friends.map((friend) => {
       if (friend.user1._id.toString() === req.user._id.toString()) {
@@ -20,6 +21,7 @@ const getFriends = asyncHandler(async (req, res) => {
       }
     }),
     page,
+    hasMore: friends.length > 0,
   });
 });
 
