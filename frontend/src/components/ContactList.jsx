@@ -16,17 +16,11 @@ const ContactList = () => {
   );
   const Toast = useToastContext();
 
-  if (loading) {
+  if (loading || data) {
     return (
       <>
-        <p>Loading...</p>
-        <div className="load-more"></div>
-      </>
-    );
-  } else if (data) {
-    return (
-      <>
-        {data.friends.map((friend) => (
+        {loading && <p>Loading...</p>}
+        {data?.friends.map((friend) => (
           <FriendItem
             key={friend._id}
             friend={friend}

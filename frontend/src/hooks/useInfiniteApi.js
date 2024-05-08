@@ -38,7 +38,6 @@ const useInfiniteApi = (cb, onSuccess = null) => {
               setData((data) => mergeObjects(data, newData));
               setPage((page) => page + 1);
               onSuccess && onSuccess();
-              console.log("merging");
             }
             setLoadingMore(false);
           });

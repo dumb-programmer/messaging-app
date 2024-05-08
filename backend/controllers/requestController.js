@@ -46,23 +46,23 @@ const PAGE_SIZE = 10;
 
 const getIncomingRequests = [
   asyncHandler(async (req, res) => {
-    const { page } = req.query;
+    const { page = 1 } = req.query;
     const requests = await Request.find({ to: req.user._id }, { to: 0 })
       .populate("from", { password: 0, bio: 0 })
       .limit(PAGE_SIZE)
       .skip((page - 1) * PAGE_SIZE);
-    res.json({ requests, page });
+    res.json({ requests, page, hasMore: requests.length > 0 });
   }),
 ];
 
 const getPendingRequests = [
   asyncHandler(async (req, res) => {
-    const { page } = req.query;
+    const { page = 1 } = req.query;
     const requests = await Request.find({ from: req.user._id }, { from: 0 })
       .populate("to", { password: 0, bio: 0 })
       .limit(PAGE_SIZE)
       .skip((page - 1) * PAGE_SIZE);
-    res.json({ requests, page });
+    res.json({ requests, page, hasMore: requests.length > 0 });
   }),
 ];
 

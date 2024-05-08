@@ -1,22 +1,21 @@
 import { useCallback } from "react";
 import getIncomingRequests from "../api/getIncomingRequests";
-import useApi from "../hooks/useApi";
+import useInfiniteApi from "../hooks/useInfiniteApi";
 import useAuthContext from "../hooks/useAuthContext";
 import IncomingRequest from "./IncomingRequest";
 import RequestSkeleton from "./RequestSkeleton";
 
 const IncomingRequests = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(
-    useCallback(() => getIncomingRequests(auth.token), [auth])
+  const { data, setData, loading, error } = useInfiniteApi(
+    useCallback((page) => getIncomingRequests(auth.token, page), [auth])
   );
 
-  if (loading) {
-    return <RequestSkeleton />;
-  } else if (data) {
+  if (loading || data) {
     return (
-      <div>
-        {data.requests.map((request) => (
+      <>
+        {loading && <RequestSkeleton />}
+        {data?.requests.map((request) => (
           <IncomingRequest
             key={request._id}
             request={request}
@@ -29,10 +28,11 @@ const IncomingRequests = () => {
             }}
           />
         ))}
-        {data.requests.length === 0 && (
+        <div className="load-more"></div>
+        {data?.requests.length === 0 && (
           <h1 style={{ textAlign: "center" }}>All Caught Up</h1>
         )}
-      </div>
+      </>
     );
   } else if (error) {
     return <p>Error</p>;

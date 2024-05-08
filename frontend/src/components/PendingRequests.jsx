@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import getPendingRequests from "../api/getPendingRequest";
-import useApi from "../hooks/useApi";
+import useInfiniteApi from "../hooks/useInfiniteApi";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
 import ToastType from "../constants/ToastType";
@@ -10,16 +10,15 @@ import RequestSkeleton from "./RequestSkeleton";
 
 const PendingRequests = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useApi(
-    useCallback(() => getPendingRequests(auth.token), [auth])
+  const { data, setData, loading, error } = useInfiniteApi(
+    useCallback((page) => getPendingRequests(auth.token, page), [auth])
   );
   const Toast = useToastContext();
 
-  if (loading) {
-    return <RequestSkeleton />;
-  } else if (data) {
+  if (loading || data) {
     return (
-      <div>
+      <>
+        {loading && <RequestSkeleton />}
         {data?.requests?.map((request) => (
           <PendingRequest
             key={request._id}
@@ -39,7 +38,8 @@ const PendingRequests = () => {
           />
         ))}
         {data?.requests?.length === 0 && <EmptyState />}
-      </div>
+        <div className="load-more"></div>
+      </>
     );
   } else if (error) {
     return <p>Error</p>;
