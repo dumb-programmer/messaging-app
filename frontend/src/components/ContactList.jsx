@@ -11,7 +11,7 @@ const ContactList = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useInfiniteApi(
+  const { data, setData, loading, error, loadMoreElementRef } = useInfiniteApi(
     useCallback((page) => getFriends(auth.token, page), [auth.token])
   );
   const Toast = useToastContext();
@@ -28,7 +28,7 @@ const ContactList = () => {
             setSelectedFriend={setSelectedFriend}
           />
         ))}
-        <div className="load-more"></div>
+        <div ref={loadMoreElementRef}></div>
         {showModal && (
           <UnfriendConfirmationModal
             selectedFriend={selectedFriend}

@@ -7,7 +7,7 @@ import RequestSkeleton from "./RequestSkeleton";
 
 const IncomingRequests = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useInfiniteApi(
+  const { data, setData, loading, error, loadMoreElementRef } = useInfiniteApi(
     useCallback((page) => getIncomingRequests(auth.token, page), [auth])
   );
 
@@ -28,7 +28,7 @@ const IncomingRequests = () => {
             }}
           />
         ))}
-        <div className="load-more"></div>
+        <div ref={loadMoreElementRef}></div>
         {data?.requests.length === 0 && (
           <h1 style={{ textAlign: "center" }}>All Caught Up</h1>
         )}

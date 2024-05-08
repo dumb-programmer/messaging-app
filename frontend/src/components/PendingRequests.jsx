@@ -10,7 +10,7 @@ import RequestSkeleton from "./RequestSkeleton";
 
 const PendingRequests = () => {
   const { auth } = useAuthContext();
-  const { data, setData, loading, error } = useInfiniteApi(
+  const { data, setData, loading, error, loadMoreElementRef } = useInfiniteApi(
     useCallback((page) => getPendingRequests(auth.token, page), [auth])
   );
   const Toast = useToastContext();
@@ -38,7 +38,7 @@ const PendingRequests = () => {
           />
         ))}
         {data?.requests?.length === 0 && <EmptyState />}
-        <div className="load-more"></div>
+        <div ref={loadMoreElementRef}></div>
       </>
     );
   } else if (error) {

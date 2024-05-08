@@ -1,38 +1,36 @@
 import { useState, useEffect, useRef } from "react";
 
-const useIntersectionObserver = (selector) => {
-    const [isIntersecting, setIsIntersecting] = useState(false);
-    const observerRef = useRef();
+const useIntersectionObserver = () => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const observerRef = useRef();
+  const elementRef = useRef(null);
 
-    const stopObserver = () => observerRef?.current?.disconnect();
+  const stopObserver = () => observerRef?.current?.disconnect();
 
-    useEffect(() => {
-        const element = document.querySelector(selector);
-
-        const options = {
-            root: null,
-            rootMargin: "0px",
-            threshold: 1.0
-        };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.target === element) {
-                    setIsIntersecting(entry.isIntersecting);
-                }
-            })
-        }, options);
-
-        observerRef.current = observer;
-
-
-        observer.observe(element);
-
-        return () => {
-            stopObserver();
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.target === elementRef.current) {
+          setIsIntersecting(entry.isIntersecting);
         }
-    }, [selector]);
+      });
+    }, options);
 
-    return { isIntersecting, stopObserver };
+    observerRef.current = observer;
+
+    observer.observe(elementRef.current);
+
+    return () => {
+      stopObserver();
+    };
+  }, [elementRef]);
+
+  return { isIntersecting, stopObserver, elementRef };
 };
 
 export default useIntersectionObserver;

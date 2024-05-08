@@ -13,13 +13,14 @@ const Chatbox = ({ user, onBack }) => {
   const { auth } = useAuthContext();
   const socket = useSocketContext();
   const chatbodyRef = useRef();
-  const { data, setData, loading, loadingMore, error } = useInfiniteApi(
-    useCallback(
-      (page) => getMessages(user._id, auth.token, page),
-      [user._id, auth.token]
-    ),
-    () => chatbodyRef.current.scrollBy({ top: 200, behavior: "smooth" })
-  );
+  const { data, setData, loading, loadingMore, error, loadMoreElementRef } =
+    useInfiniteApi(
+      useCallback(
+        (page) => getMessages(user._id, auth.token, page),
+        [user._id, auth.token]
+      ),
+      () => chatbodyRef.current.scrollBy({ top: 200, behavior: "smooth" })
+    );
 
   const messages = useMemo(
     () =>
@@ -106,6 +107,7 @@ const Chatbox = ({ user, onBack }) => {
       <ChatBody
         loading={loading}
         loadingMore={loadingMore}
+        loadMoreElementRef={loadMoreElementRef}
         messages={
           messages &&
           Object.values(messages).sort(

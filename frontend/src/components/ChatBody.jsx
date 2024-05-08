@@ -7,6 +7,7 @@ import Spinner from "./Spinner";
 const ChatBody = ({
   loading,
   loadingMore,
+  loadMoreElementRef,
   messages,
   chatbodyRef,
   scrollToBottom,
@@ -35,7 +36,7 @@ const ChatBody = ({
           </div>
         </div>
       )}
-      <div className="load-more"></div>
+      <div ref={loadMoreElementRef}></div>
       {messages?.map((message) => (
         <Message key={message._id} message={message} />
       ))}
@@ -47,6 +48,7 @@ ChatBody.propTypes = {
   messages: PropTypes.array,
   loading: PropTypes.bool,
   loadingMore: PropTypes.bool,
+  loadMoreElementRef: PropTypes.object,
   chatbodyRef: PropTypes.object,
   scrollToBottom: PropTypes.func,
 };
