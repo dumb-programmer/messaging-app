@@ -4,6 +4,7 @@ import useInfiniteApi from "../hooks/useInfiniteApi";
 import useAuthContext from "../hooks/useAuthContext";
 import IncomingRequest from "./IncomingRequest";
 import RequestSkeleton from "./RequestSkeleton";
+import EmptyRequestsState from "./EmptyRequestsState";
 
 const IncomingRequests = () => {
   const { auth } = useAuthContext();
@@ -29,9 +30,7 @@ const IncomingRequests = () => {
           />
         ))}
         <div ref={loadMoreElementRef}></div>
-        {data?.requests.length === 0 && (
-          <h1 style={{ textAlign: "center" }}>All Caught Up</h1>
-        )}
+        {data?.requests.length === 0 && <EmptyRequestsState />}
       </>
     );
   } else if (error) {

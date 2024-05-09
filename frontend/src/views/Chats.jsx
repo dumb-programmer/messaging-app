@@ -7,6 +7,7 @@ import useSocketContext from "../hooks/useSocketContext";
 import ChatBox from "../components/Chatbox";
 import ChatSkeleton from "../components/ChatSkeleton";
 import ChatMessageList from "../components/ChatMessageList";
+import EmptyChats from "../components/EmptyChats";
 
 const sortMessagesByDate = (messages) =>
   messages.sort(
@@ -114,6 +115,7 @@ const Chats = () => {
         <div className="messages">
           {loading && <ChatSkeleton />}
           {error && <div>Error</div>}
+          {data?.messages.length == 0 && <EmptyChats />}
           {!loading && !error && (
             <ChatMessageList
               messages={messages && sortMessagesByDate(Object.values(messages))}

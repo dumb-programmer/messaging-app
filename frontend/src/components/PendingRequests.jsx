@@ -4,7 +4,7 @@ import useInfiniteApi from "../hooks/useInfiniteApi";
 import useAuthContext from "../hooks/useAuthContext";
 import useToastContext from "../hooks/useToastContext";
 import ToastType from "../constants/ToastType";
-import EmptyState from "./EmptyState";
+import EmptyRequestsState from "./EmptyRequestsState";
 import PendingRequest from "./PendingRequest";
 import RequestSkeleton from "./RequestSkeleton";
 
@@ -37,7 +37,7 @@ const PendingRequests = () => {
             }}
           />
         ))}
-        {data?.requests?.length === 0 && <EmptyState />}
+        {data?.requests?.length === 0 && <EmptyRequestsState />}
         <div ref={loadMoreElementRef}></div>
       </>
     );

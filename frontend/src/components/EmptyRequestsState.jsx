@@ -1,6 +1,6 @@
-const EmptyState = () => {
+const EmptyRequestsState = () => {
   return (
-    <div className="flex flex-column centered">
+    <div className="flex flex-column centered gap-sm">
       <svg
         width="350px"
         height="350px"
@@ -29,10 +29,12 @@ const EmptyState = () => {
           />
         </g>
       </svg>
-      <h2>No Requests</h2>
-      <p>You {"don't"} have any requests at the moment</p>
+      <h3>No Requests</h3>
+      <p className="text-sm" style={{ color: "#607274", textAlign: "center" }}>
+        You {"don't"} have any requests at the moment
+      </p>
     </div>
   );
 };
 
-export default EmptyState;
+export default EmptyRequestsState;

@@ -6,6 +6,7 @@ import UnfriendConfirmationModal from "./UnfriendConfirmationModal";
 import useToastContext from "../hooks/useToastContext";
 import ToastType from "../constants/ToastType";
 import FriendItem from "./FriendItem";
+import EmptyContactList from "./EmptyContactList";
 
 const ContactList = () => {
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -19,6 +20,7 @@ const ContactList = () => {
   if (loading || data) {
     return (
       <>
+        {data?.friends.length == 0 && <EmptyContactList />}
         {loading && <p>Loading...</p>}
         {data?.friends.map((friend) => (
           <FriendItem
