@@ -34,17 +34,18 @@ const deleteFile = asyncHandler(async (req, res, next) => {
     message.from.toString() === req.user._id.toString()
   ) {
     await unlink(path.join(__dirname, "..", "/uploads/files/", fileName));
-    const newMedia = message.files.filter((file) => file !== req.originalUrl);
+    const newFiles = message.files.filter(
+      (file) => file.url !== req.originalUrl
+    );
     const fromSocket = getUsers()[message.from.toString()];
     const toSocket = getUsers()[message.to.toString()];
     // The message only contains a file
-    if (newMedia.length === 0 && message.content.length === 0) {
+    if (newFiles.length === 0 && message.content.length === 0) {
+      console.log("delete message");
       await Message.deleteOne({ _id: message._id });
-      io.to(fromSocket)
-        .to(toSocket)
-        .emit("delete message", message._id.toString());
+      io.to(fromSocket).to(toSocket).emit("delete message", message);
     } else {
-      await Message.updateOne({ _id: messageId }, { files: newMedia });
+      await Message.updateOne({ _id: messageId }, { files: newFiles });
     }
     await FileMeta.deleteOne({ fileName });
     io.to(fromSocket).to(toSocket).emit("delete file", {

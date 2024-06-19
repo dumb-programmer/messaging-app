@@ -39,7 +39,7 @@ const ChatFooter = ({ user }) => {
       )}
       <div className="chat-footer">
         <TypingIndicator name={user.firstName} selectedUserId={user._id} />
-        <form onSubmit={onCreateMessage}>
+        <form id="create-message-form" onSubmit={onCreateMessage}>
           <div className="form-control">
             <input
               type="text"
@@ -95,6 +95,7 @@ const ChatFooter = ({ user }) => {
           </div>
         </form>
         <button
+          form="create-message-form"
           type="submit"
           className="btn primary-btn flex justify-center align-center"
         >

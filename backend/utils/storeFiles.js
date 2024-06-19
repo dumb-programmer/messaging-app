@@ -3,14 +3,17 @@ const generateFilename = require("./generateFilename");
 const { FileMeta } = require("../models");
 const path = require("path");
 
-const storeFiles = async (mediaList, directory, owners) => {
+const storeFiles = async (fileList, directory, owners) => {
   const mediaPaths = await Promise.all(
-    mediaList.map(async (media) => {
-      const fileName = generateFilename(media.originalname);
+    fileList.map(async (file) => {
+      const fileName = generateFilename(file.originalname);
       const filePath = `${directory}/${fileName}`;
-      await writeFile(path.join(__dirname, "..", filePath), media.buffer);
-      await FileMeta.create({ fileName, owners });
-      return filePath;
+      await writeFile(path.join(__dirname, "..", filePath), file.buffer);
+      await FileMeta.create({
+        fileName,
+        owners,
+      });
+      return { url: filePath, name: file.originalname };
     })
   );
   return mediaPaths;

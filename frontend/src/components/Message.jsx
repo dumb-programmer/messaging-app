@@ -41,12 +41,13 @@ const Message = ({ message }) => {
           </div>
         )}
         <div>
-          {message?.files?.map((item, idx) => (
+          {message?.files?.map((file, idx) => (
             <File
               key={idx}
               isOwner={auth.user._id === message.from}
               messageId={message._id}
-              item={item}
+              name={file.name}
+              item={file.url}
             />
           ))}
         </div>
